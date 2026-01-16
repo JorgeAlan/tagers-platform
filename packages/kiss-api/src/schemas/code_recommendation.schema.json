@@ -1,0 +1,87 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "code_recommendation",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "title": {
+      "type": "string",
+      "maxLength": 120
+    },
+    "summary": {
+      "type": "string",
+      "maxLength": 800
+    },
+    "risk_level": {
+      "type": "string",
+      "enum": [
+        "LOW",
+        "MEDIUM",
+        "HIGH"
+      ]
+    },
+    "confidence": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 1
+    },
+    "changes": {
+      "type": "array",
+      "minItems": 0,
+      "maxItems": 12,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "path": {
+            "type": "string",
+            "maxLength": 240
+          },
+          "change_type": {
+            "type": "string",
+            "enum": [
+              "PATCH",
+              "ADD_FILE",
+              "DELETE_FILE",
+              "CONFIG"
+            ]
+          },
+          "diff_unified": {
+            "type": "string",
+            "maxLength": 20000
+          }
+        },
+        "required": [
+          "path",
+          "change_type",
+          "diff_unified"
+        ]
+      }
+    },
+    "testing_notes": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "maxLength": 240
+      },
+      "maxItems": 20
+    },
+    "apply_steps": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "maxLength": 240
+      },
+      "maxItems": 20
+    }
+  },
+  "required": [
+    "title",
+    "summary",
+    "risk_level",
+    "confidence",
+    "changes",
+    "testing_notes",
+    "apply_steps"
+  ]
+}

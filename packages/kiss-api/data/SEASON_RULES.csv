@@ -1,0 +1,12 @@
+rule_id,rule_type,start_date,end_date,min_lead_days,channels,product_categories,priority,message_bot,can_check_stock,can_suggest_branch,enabled
+PREVENTA_DEFAULT,PREVENTA,2025-12-01,2026-01-18,2,web;bot;pos,all,10,Para esa fecha necesitas ordenar con al menos 2 días de anticipación.,TRUE,FALSE,TRUE
+PUSH_DIC_24,PUSH,2025-12-24,2025-12-24,0,web;bot;pos,roscas,100,¡Hoy es Nochebuena! Puedes ordenar para recoger hoy mismo 🎄,TRUE,FALSE,TRUE
+PUSH_DIC_31,PUSH,2025-12-31,2025-12-31,0,web;bot;pos,roscas,100,¡Último día del año! Puedes ordenar para recoger hoy 🎆,TRUE,FALSE,TRUE
+PUSH_ENE_2_4,PUSH,2026-01-02,2026-01-04,0,web;bot;pos,roscas,100,¡Días de push! Puedes ordenar para recoger hoy mismo.,TRUE,FALSE,TRUE
+PUSH_ENE_2_4_POSTRES,BLOQUEADO,2026-01-02,2026-01-04,0,,postres,110,Los postres no están disponibles del 2 al 4 de enero.,FALSE,FALSE,TRUE
+SOLO_POS_ENE_5_6,SOLO_POS,2026-01-05,2026-01-06,0,pos,roscas,100,📍 El 5 y 6 de enero solo vendemos en sucursal. Te puedo decir dónde hay disponibilidad.,TRUE,TRUE,TRUE
+SOLO_POS_ENE_5_6_POSTRES,BLOQUEADO,2026-01-05,2026-01-06,0,,postres,110,Los postres no están disponibles el 5 y 6 de enero.,FALSE,FALSE,TRUE
+PUSH_ENE_7_11,PUSH,2026-01-07,2026-01-11,0,web;bot;pos,roscas,100,¡Días de push! Puedes ordenar para recoger hoy mismo.,TRUE,FALSE,TRUE
+PUSH_ENE_7_11_POSTRES,BLOQUEADO,2026-01-07,2026-01-11,0,,postres,110,Los postres no están disponibles del 7 al 11 de enero.,FALSE,FALSE,TRUE
+PREVENTA_ENE_12_18,PREVENTA,2026-01-12,2026-01-18,2,web;bot;pos,all,100,Del 12 al 18 de enero solo hay preventa (mínimo 2 días de anticipación).,TRUE,FALSE,TRUE
+FIN_TEMPORADA,FIN_TEMPORADA,2026-01-19,2026-12-31,0,,all,1000,La temporada de roscas terminó el 18 de enero. ¡Gracias por preferirnos! 🥐,FALSE,FALSE,TRUE

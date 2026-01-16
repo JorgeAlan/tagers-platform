@@ -1,0 +1,83 @@
+{
+  "meta": {
+    "name": "Tagers KISS + HITL — Completion Pack",
+    "version": "1.0.0",
+    "target_model": "Claude Opus 4.5",
+    "created_at_iso": "2025-12-24T00:00:00Z"
+  },
+  "context": {
+    "goals": [
+      "HITL síncrono para consultas físicas en sucursal (sin alucinación)",
+      "Integración Chatwoot webhook + Staff PWA + Socket.io",
+      "Auto-recomendación de código con preview diff y guardado en Postgres"
+    ],
+    "critical_rules": [
+      "OpenTable (no CoverManager) para reservaciones",
+      "No exponer secretos en cliente; tokens solo en env y tablets",
+      "Registrar beacons: HITL_PHYSICAL_CHECK + HUMAN_DECISION_RESPONSE",
+      "Si hay timeout de staff, fallback con OpenTable"
+    ]
+  },
+  "repo_notes": {
+    "new_or_modified_files": [
+      "src/routes/chatwoot.js",
+      "src/hitl/socket_server.js",
+      "src/hitl/hitl_service.js",
+      "public/staff-pwa/*",
+      "src/engine/code_recommender.js",
+      "src/routes/recommendations.js",
+      "src/schemas/chatwoot_intent.schema.json",
+      "src/schemas/hitl_customer_reply.schema.json",
+      "src/schemas/code_recommendation.schema.json",
+      "config/branches.json",
+      "src/db/schema.sql"
+    ]
+  },
+  "tasks": [
+    {
+      "id": "H1_chatwoot_payload_compat",
+      "priority": "P0",
+      "description": "Hacer el parser del webhook Chatwoot robusto a variantes del payload (message/content, sender_type, event names) y agregar pruebas rápidas con payloads de ejemplo.",
+      "acceptance_criteria": [
+        "Ignora mensajes salientes y privados",
+        "Procesa message_created entrante",
+        "Extrae conversation_id, account_id, inbox_name consistentemente"
+      ]
+    },
+    {
+      "id": "H2_hitl_staff_ui_polish",
+      "priority": "P1",
+      "description": "Mejorar UX del Staff PWA: cola de solicitudes, reintentos de conexión, indicador de audio desbloqueado, y modo pantalla completa.",
+      "acceptance_criteria": [
+        "Soporta múltiples solicitudes (queue)",
+        "Reintento automático si socket se cae",
+        "Sonido consistente en iOS tras tap inicial"
+      ]
+    },
+    {
+      "id": "H3_security_hardening",
+      "priority": "P0",
+      "description": "Endurecer auth: rate limits básicos por IP en webhook, validar tokens por sucursal, y registrar auditoría de accesos.",
+      "acceptance_criteria": [
+        "Webhook: valida token, limita bursts",
+        "Socket: token por sucursal obligatorio",
+        "Logs estructurados (branch_id, conversation_id, instruction_id)"
+      ]
+    },
+    {
+      "id": "H4_autorec_scheduling",
+      "priority": "P1",
+      "description": "Agregar opción de cron interno (node-cron) controlado por env para ejecutar /system/recommendations/run automáticamente.",
+      "acceptance_criteria": [
+        "Autorec no corre si AUTOREC_ENABLED=false",
+        "Respeta AUTOREC_CRON",
+        "Registra output en system_recommendations"
+      ]
+    }
+  ],
+  "style_constraints": {
+    "language": "Spanish",
+    "tone": "Business-technical, direct, no fluff",
+    "security": "Never output secrets; use env vars"
+  }
+}

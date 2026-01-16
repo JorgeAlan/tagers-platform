@@ -1,0 +1,15 @@
+{
+  "name": "Tagers Staff HITL",
+  "short_name": "Tagers HITL",
+  "start_url": "/staff/",
+  "display": "standalone",
+  "background_color": "#0f0f10",
+  "theme_color": "#111111",
+  "icons": [
+    {
+      "src": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAQAAAC1+jfqAAAAJ0lEQVR4AWP8//8/AyUYTFhY2L9gYGCQYmBgYFJgYGBgAACU0gYkq3xF5QAAAABJRU5ErkJggg==",
+      "sizes": "16x16",
+      "type": "image/png"
+    }
+  ]
+}

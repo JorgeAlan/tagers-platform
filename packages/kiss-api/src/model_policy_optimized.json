@@ -1,0 +1,161 @@
+{
+  "version": "2.0.0-optimized",
+  "description": "Model policy optimizada - Usa modelos más económicos para tareas simples",
+  "defaults": {
+    "store": false,
+    "max_output_tokens": 800,
+    "service_tier": "auto"
+  },
+  "tasks": {
+    "normalize_human_signal": {
+      "model": "gpt-5-nano",
+      "service_tier": "flex",
+      "max_output_tokens": 500,
+      "reasoning": { "effort": "low" },
+      "text": { "verbosity": "low" }
+    },
+    "summarize_voice_note": {
+      "model": "gpt-5-nano",
+      "service_tier": "flex",
+      "max_output_tokens": 400,
+      "text": { "verbosity": "low" }
+    },
+    "ops_instruction_low_risk": {
+      "model": "gpt-5-mini",
+      "service_tier": "default",
+      "max_output_tokens": 600,
+      "text": { "verbosity": "medium" }
+    },
+    "ops_instruction_high_risk": {
+      "model": "gpt-5-mini",
+      "service_tier": "default",
+      "max_output_tokens": 2000,
+      "reasoning": { "effort": "low" },
+      "text": { "verbosity": "medium" }
+    },
+    "ops_instruction_critical": {
+      "model": "gpt-5.2",
+      "service_tier": "priority",
+      "max_output_tokens": 4000,
+      "reasoning": { "effort": "medium" },
+      "text": { "verbosity": "high" }
+    },
+    "chatwoot_intent": {
+      "model": "gpt-5-mini",
+      "service_tier": "default",
+      "max_output_tokens": 800,
+      "reasoning": { "effort": "low" },
+      "text": { "verbosity": "low" },
+      "_comment": "OPTIMIZADO: Era gpt-5.2 con 1800 tokens"
+    },
+    "sentiment_analysis": {
+      "model": "gpt-5-nano",
+      "service_tier": "flex",
+      "max_output_tokens": 300,
+      "reasoning": { "effort": "low" },
+      "text": { "verbosity": "low" },
+      "_comment": "OPTIMIZADO: Era gpt-5-mini con 500 tokens"
+    },
+    "chatwoot_reply": {
+      "model": "gpt-5-mini",
+      "service_tier": "default",
+      "max_output_tokens": 800,
+      "reasoning": { "effort": "low" },
+      "text": { "verbosity": "medium" },
+      "_comment": "OPTIMIZADO: Era gpt-5.2 con 1200 tokens"
+    },
+    "tania_reply": {
+      "model": "gpt-5-mini",
+      "service_tier": "default",
+      "max_output_tokens": 1000,
+      "reasoning": { "effort": "none" },
+      "temperature": 0.3,
+      "text": { "verbosity": "medium" },
+      "_comment": "OPTIMIZADO: Era gpt-5.2 con 3000 tokens"
+    },
+    "tania_reply_complex": {
+      "model": "gpt-5.2",
+      "service_tier": "priority",
+      "max_output_tokens": 2000,
+      "reasoning": { "effort": "low" },
+      "temperature": 0.3,
+      "text": { "verbosity": "high" },
+      "_comment": "Para casos que detectamos como complejos"
+    },
+    "conversation_analyzer": {
+      "model": "gpt-5-nano",
+      "service_tier": "flex",
+      "max_output_tokens": 500,
+      "reasoning": { "effort": "low" },
+      "text": { "verbosity": "low" },
+      "_comment": "OPTIMIZADO: Era gpt-5.2 con 1800 tokens - CANDIDATO A ELIMINAR"
+    },
+    "response_validator": {
+      "model": "gpt-5-nano",
+      "service_tier": "flex",
+      "max_output_tokens": 400,
+      "reasoning": { "effort": "low" },
+      "text": { "verbosity": "low" },
+      "_comment": "OPTIMIZADO: Era gpt-5.2 con 1500 tokens - CANDIDATO A ELIMINAR"
+    },
+    "incident_report": {
+      "model": "gpt-5-mini",
+      "service_tier": "default",
+      "max_output_tokens": 2000,
+      "reasoning": { "effort": "low" },
+      "text": { "verbosity": "high" },
+      "_comment": "OPTIMIZADO: Era gpt-5.2 con 5000 tokens"
+    },
+    "code_recommendation": {
+      "model": "gpt-5.2",
+      "service_tier": "default",
+      "max_output_tokens": 4000,
+      "reasoning": { "effort": "high" },
+      "text": { "verbosity": "high" }
+    },
+    "order_step_classifier": {
+      "model": "gpt-5-nano",
+      "service_tier": "flex",
+      "max_output_tokens": 400,
+      "reasoning": { "effort": "low" },
+      "text": { "verbosity": "low" },
+      "temperature": 0.0,
+      "_comment": "OPTIMIZADO: Era gpt-5.2 con 700 tokens"
+    },
+    "flow_control_classifier": {
+      "model": "gpt-5-nano",
+      "service_tier": "flex",
+      "max_output_tokens": 400,
+      "reasoning": { "effort": "low" },
+      "text": { "verbosity": "low" },
+      "temperature": 0.0,
+      "_comment": "OPTIMIZADO: Era gpt-5.2 con 700 tokens"
+    },
+    "conversation_summary": {
+      "model": "gpt-5-nano",
+      "service_tier": "flex",
+      "max_output_tokens": 600,
+      "reasoning": { "effort": "low" },
+      "text": { "verbosity": "medium" },
+      "temperature": 0.3,
+      "_comment": "OPTIMIZADO: Era gpt-5-mini con 1500 tokens"
+    }
+  },
+  "fallbacks": [
+    { "from": "gpt-5-nano", "to": "gpt-5-mini" },
+    { "from": "gpt-5-mini", "to": "gpt-5.2" },
+    { "from": "gpt-5.2", "to": "gpt-5.1" },
+    { "from": "gpt-5.1", "to": "gpt-4.1" }
+  ],
+  "_optimization_notes": {
+    "changes": [
+      "1. Clasificadores (intent, flow_control, order_step) ahora usan gpt-5-nano en vez de gpt-5.2 - Ahorro ~85%",
+      "2. Sentiment analysis ahora usa gpt-5-nano - Ahorro ~80%",
+      "3. Conversation analyzer y response_validator usan gpt-5-nano - Ahorro ~85%",
+      "4. tania_reply usa gpt-5-mini en vez de gpt-5.2 - Ahorro ~60%",
+      "5. Todos los max_output_tokens reducidos a lo mínimo necesario - Ahorro ~40%"
+    ],
+    "estimated_savings": "70-80% vs policy anterior",
+    "risk": "Monitorear calidad de respuestas. Si baja, escalar a modelo superior selectivamente."
+  }
+}

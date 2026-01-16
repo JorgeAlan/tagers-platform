@@ -1,0 +1,282 @@
+{
+  "version": "2.0.0-fusion",
+  "description": "Model policy optimizado para INTELIGENCIA y experiencia del cliente. NO optimizado para costo.",
+  "defaults": {
+    "store": false,
+    "max_output_tokens": 1200,
+    "service_tier": "default"
+  },
+  "tasks": {
+    
+    "ana_super_intent_extraction": {
+      "description": "Extracción estructurada de intent + slots. CRÍTICO para evitar bugs como 'un'→1→fecha",
+      "model": "gpt-5.2",
+      "service_tier": "default",
+      "max_output_tokens": 400,
+      "reasoning": {
+        "effort": "low"
+      },
+      "temperature": 0.1,
+      "text": {
+        "verbosity": "low"
+      }
+    },
+    
+    "ana_super_order_modify": {
+      "description": "Flujo de modificación de pedidos. Alto riesgo, requiere máxima inteligencia.",
+      "model": "gpt-5.2",
+      "service_tier": "default",
+      "max_output_tokens": 1500,
+      "reasoning": {
+        "effort": "medium"
+      },
+      "temperature": 0.3,
+      "text": {
+        "verbosity": "medium"
+      }
+    },
+    
+    "ana_super_date_parse": {
+      "description": "Parseo de fechas desde texto. Debe ser determinístico.",
+      "model": "gpt-5.2",
+      "service_tier": "default",
+      "max_output_tokens": 300,
+      "reasoning": {
+        "effort": "low"
+      },
+      "temperature": 0.0,
+      "text": {
+        "verbosity": "low"
+      }
+    },
+    
+    "ana_super_high_risk_narration": {
+      "description": "Generación de respuestas en momentos críticos (error de stock, rollback)",
+      "model": "gpt-5.2",
+      "service_tier": "default",
+      "max_output_tokens": 800,
+      "reasoning": {
+        "effort": "none"
+      },
+      "temperature": 0.4,
+      "text": {
+        "verbosity": "medium"
+      }
+    },
+    
+    "ana_super_copy_rewrite": {
+      "description": "Reescritura de copy para personalidad de Tan • IA",
+      "model": "gpt-5-mini",
+      "service_tier": "default",
+      "max_output_tokens": 500,
+      "text": {
+        "verbosity": "medium"
+      }
+    },
+    
+    "chatwoot_intent": {
+      "description": "Clasificación de intent inicial (antes de flujo estructurado)",
+      "model": "gpt-5.2",
+      "service_tier": "default",
+      "max_output_tokens": 500,
+      "reasoning": {
+        "effort": "low"
+      },
+      "temperature": 0.2,
+      "text": {
+        "verbosity": "low"
+      }
+    },
+    
+    "chatwoot_reply": {
+      "description": "Generación de respuestas generales de Tan • IA",
+      "model": "gpt-5.2",
+      "service_tier": "default",
+      "max_output_tokens": 900,
+      "temperature": 0.5,
+      "text": {
+        "verbosity": "medium"
+      }
+    },
+    
+    "tania_reply": {
+      "description": "Respuestas de Tan • IA (CS Bot)",
+      "model": "gpt-5.2",
+      "service_tier": "default",
+      "max_output_tokens": 1200,
+      "reasoning": {
+        "effort": "none"
+      },
+      "temperature": 0.4,
+      "text": {
+        "verbosity": "medium"
+      }
+    },
+    
+    "conversation_analyzer": {
+      "description": "Análisis de conversación para detectar frustración, intent oculto",
+      "model": "gpt-5.2",
+      "service_tier": "default",
+      "max_output_tokens": 600,
+      "reasoning": {
+        "effort": "low"
+      },
+      "text": {
+        "verbosity": "medium"
+      }
+    },
+    
+    "sentiment_analysis": {
+      "description": "Análisis de sentimiento del cliente",
+      "model": "gpt-5-mini",
+      "service_tier": "default",
+      "max_output_tokens": 300,
+      "reasoning": {
+        "effort": "low"
+      },
+      "text": {
+        "verbosity": "low"
+      }
+    },
+    
+    "normalize_human_signal": {
+      "description": "Normalización de señales de HITL",
+      "model": "gpt-5-mini",
+      "service_tier": "default",
+      "max_output_tokens": 500,
+      "reasoning": {
+        "effort": "low"
+      },
+      "text": {
+        "verbosity": "low"
+      }
+    },
+    
+    "summarize_voice_note": {
+      "description": "Resumen de notas de voz",
+      "model": "gpt-5-mini",
+      "service_tier": "default",
+      "max_output_tokens": 600,
+      "text": {
+        "verbosity": "medium"
+      }
+    },
+    
+    "ops_instruction_low_risk": {
+      "description": "Instrucciones operativas de bajo riesgo",
+      "model": "gpt-5-mini",
+      "service_tier": "default",
+      "max_output_tokens": 800,
+      "text": {
+        "verbosity": "medium"
+      }
+    },
+    
+    "ops_instruction_high_risk": {
+      "description": "Instrucciones operativas de alto riesgo (producción)",
+      "model": "gpt-5.2",
+      "service_tier": "default",
+      "max_output_tokens": 4000,
+      "reasoning": {
+        "effort": "medium"
+      },
+      "text": {
+        "verbosity": "medium"
+      }
+    },
+    
+    "ops_instruction_critical": {
+      "description": "Instrucciones críticas (incidentes, emergencias)",
+      "model": "gpt-5.2",
+      "service_tier": "priority",
+      "max_output_tokens": 8000,
+      "reasoning": {
+        "effort": "high"
+      },
+      "text": {
+        "verbosity": "high"
+      }
+    },
+    
+    "response_validator": {
+      "description": "Validación de respuestas antes de enviar",
+      "model": "gpt-5-mini",
+      "service_tier": "default",
+      "max_output_tokens": 400,
+      "reasoning": {
+        "effort": "low"
+      },
+      "text": {
+        "verbosity": "low"
+      }
+    },
+    
+    "incident_report": {
+      "description": "Generación de reportes de incidentes",
+      "model": "gpt-5.2",
+      "service_tier": "default",
+      "max_output_tokens": 5000,
+      "reasoning": {
+        "effort": "medium"
+      },
+      "text": {
+        "verbosity": "high"
+      }
+    },
+    
+    "code_recommendation": {
+      "description": "Recomendaciones de código",
+      "model": "gpt-5.2",
+      "service_tier": "default",
+      "max_output_tokens": 8000,
+      "reasoning": {
+        "effort": "high"
+      },
+      "text": {
+        "verbosity": "high"
+      }
+    }
+  },
+  
+  "fallbacks": [
+    {
+      "from": "gpt-5-nano",
+      "to": "gpt-5-mini"
+    },
+    {
+      "from": "gpt-5-mini",
+      "to": "gpt-5.2"
+    },
+    {
+      "from": "gpt-5.2",
+      "to": "gpt-5.1"
+    },
+    {
+      "from": "gpt-5.1",
+      "to": "gpt-4.1"
+    }
+  ],
+  
+  "feature_flags": {
+    "ANA_SECURE_ORDER_MODIFY": {
+      "description": "Habilita flujo seguro de modificación de pedidos",
+      "default": false,
+      "recommended": true
+    },
+    "ANA_USE_STRICT_TOOLS": {
+      "description": "Usa strict mode en function calling",
+      "default": true,
+      "recommended": true
+    },
+    "ANA_TOOL_GATING": {
+      "description": "Habilita tool gating por etapa",
+      "default": true,
+      "recommended": true
+    },
+    "ANA_INTENT_EXTRACTION": {
+      "description": "Usa extracción estructurada de intent",
+      "default": true,
+      "recommended": true
+    }
+  }
+}

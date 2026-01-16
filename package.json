@@ -1,0 +1,28 @@
+{
+  "name": "tagers-platform",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Tagers Platform Monorepo - KISS API + LUCA + Control Tower",
+  "scripts": {
+    "dev:kiss": "pnpm --filter kiss-api dev",
+    "dev:luca": "pnpm --filter luca-api dev",
+    "dev:tower": "pnpm --filter tower dev",
+    "dev:all": "pnpm -r --parallel dev",
+    "start:kiss": "pnpm --filter kiss-api start",
+    "start:luca": "pnpm --filter luca-api start",
+    "build:tower": "pnpm --filter tower build",
+    "lint": "pnpm -r lint",
+    "test": "pnpm -r test",
+    "test:integrity": "pnpm --filter kiss-api test:integrity",
+    "db:migrate": "pnpm --filter luca-api db:migrate"
+  },
+  "devDependencies": {
+    "turbo": "^2.0.0"
+  },
+  "engines": {
+    "node": ">=20.0.0",
+    "pnpm": ">=8.0.0"
+  },
+  "packageManager": "pnpm@8.15.0"
+}

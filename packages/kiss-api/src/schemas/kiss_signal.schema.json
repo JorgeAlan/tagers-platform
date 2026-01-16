@@ -1,0 +1,189 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://tagers.com/schemas/kiss_signal.schema.json",
+  "title": "KissNormalizedSignal",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "signal_type",
+    "severity",
+    "summary",
+    "entities",
+    "confidence",
+    "recommended_action"
+  ],
+  "properties": {
+    "signal_type": {
+      "type": "string",
+      "enum": [
+        "CANCEL_REASON",
+        "VIP_REQUEST_INTENT",
+        "VIP_PRESSURE",
+        "OPS_REALLOCATION",
+        "PRODUCTION_CONSTRAINT",
+        "QUALITY_ISSUE",
+        "SHIFT_INCIDENT_LOG",
+        "STOCK_DISCREPANCY",
+        "HUMAN_DECISION_RESPONSE",
+        "OTHER"
+      ]
+    },
+    "severity": {
+      "type": "string",
+      "enum": [
+        "LOW",
+        "MEDIUM",
+        "HIGH",
+        "CRITICAL"
+      ]
+    },
+    "summary": {
+      "type": "string",
+      "maxLength": 240
+    },
+    "entities": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "order_id": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "sku": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "flavor": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "sale_date": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "location_id": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "from_location_id": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "to_location_id": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "qty": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "minimum": 0
+        },
+        "customer_segment": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "eta_minutes": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "minimum": 0
+        },
+        "batch_id": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "shift_id": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "incident_type": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "channel": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "enum": [
+            null,
+            "social",
+            "pos",
+            "kitchen",
+            "qa",
+            "web",
+            "control_tower",
+            "other"
+          ]
+        },
+        "original_instruction_id": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "decision": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      },
+      "required": [
+        "order_id",
+        "sku",
+        "flavor",
+        "sale_date",
+        "location_id",
+        "from_location_id",
+        "to_location_id",
+        "qty",
+        "customer_segment",
+        "eta_minutes",
+        "batch_id",
+        "shift_id",
+        "incident_type",
+        "channel",
+        "original_instruction_id",
+        "decision"
+      ]
+    },
+    "recommended_action": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "maxLength": 160
+    },
+    "confidence": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 1
+    }
+  }
+}

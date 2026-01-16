@@ -1,0 +1,46 @@
+{
+  "title": "flow_control_classifier",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "action",
+    "target_flow",
+    "confidence",
+    "rationale"
+  ],
+  "properties": {
+    "action": {
+      "type": "string",
+      "enum": [
+        "continue",
+        "switch_flow",
+        "cancel_flow",
+        "handoff_human",
+        "clarify"
+      ]
+    },
+    "target_flow": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "enum": [
+        "ORDER_CREATE",
+        "ORDER_STATUS",
+        "ORDER_MODIFY",
+        "GENERAL_INFO",
+        "LEAD",
+        null
+      ]
+    },
+    "confidence": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 1
+    },
+    "rationale": {
+      "type": "string",
+      "description": "Breve explicación (1-2 frases) de por qué se eligió la acción."
+    }
+  }
+}

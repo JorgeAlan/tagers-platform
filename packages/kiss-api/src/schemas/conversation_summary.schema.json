@@ -1,0 +1,127 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "conversation_summary",
+  "description": "Resumen estructurado de una conversación con facts extraídos",
+  "type": "object",
+  "properties": {
+    "summary": {
+      "type": "string",
+      "description": "Resumen conciso de la conversación (máx 200 palabras)",
+      "minLength": 10,
+      "maxLength": 1500
+    },
+    "primary_intent": {
+      "type": "string",
+      "description": "Intención principal del cliente",
+      "enum": [
+        "order_create",
+        "order_status",
+        "order_modify",
+        "product_inquiry",
+        "price_inquiry",
+        "availability_inquiry",
+        "complaint",
+        "feedback",
+        "reservation",
+        "general_inquiry",
+        "greeting_only",
+        "other"
+      ]
+    },
+    "resolution_status": {
+      "type": "string",
+      "description": "Estado de resolución de la conversación",
+      "enum": [
+        "resolved",
+        "pending",
+        "escalated_human",
+        "abandoned",
+        "unknown"
+      ]
+    },
+    "products_mentioned": {
+      "type": "array",
+      "description": "Productos mencionados en la conversación",
+      "items": {
+        "type": "string"
+      },
+      "maxItems": 10
+    },
+    "key_dates": {
+      "type": "array",
+      "description": "Fechas importantes mencionadas",
+      "items": {
+        "type": "object",
+        "properties": {
+          "date": {
+            "type": "string",
+            "description": "Fecha en formato YYYY-MM-DD o descripción relativa"
+          },
+          "context": {
+            "type": "string",
+            "description": "Para qué es la fecha (entrega, recoger, evento)"
+          }
+        },
+        "required": ["date", "context"],
+        "additionalProperties": false
+      },
+      "maxItems": 5
+    },
+    "sentiment": {
+      "type": "string",
+      "description": "Sentimiento general del cliente en la conversación",
+      "enum": ["positive", "neutral", "negative", "mixed"]
+    },
+    "extracted_facts": {
+      "type": "array",
+      "description": "Hechos/preferencias extraídos para memoria a largo plazo",
+      "items": {
+        "type": "object",
+        "properties": {
+          "fact_type": {
+            "type": "string",
+            "enum": ["preference", "personal_info", "dietary", "occasion", "feedback", "order_history", "other"]
+          },
+          "fact_key": {
+            "type": "string",
+            "description": "Identificador corto del fact (snake_case)",
+            "pattern": "^[a-z][a-z0-9_]*$",
+            "maxLength": 50
+          },
+          "fact_value": {
+            "type": "string",
+            "description": "Valor descriptivo del fact",
+            "maxLength": 500
+          },
+          "confidence": {
+            "type": "number",
+            "description": "Confianza en el fact (0.5-1.0)",
+            "minimum": 0.5,
+            "maximum": 1.0
+          }
+        },
+        "required": ["fact_type", "fact_key", "fact_value", "confidence"],
+        "additionalProperties": false
+      },
+      "maxItems": 10
+    },
+    "follow_up_needed": {
+      "type": "boolean",
+      "description": "Si la conversación requiere seguimiento"
+    },
+    "follow_up_reason": {
+      "type": "string",
+      "description": "Razón del seguimiento necesario (si aplica)",
+      "maxLength": 200
+    }
+  },
+  "required": [
+    "summary",
+    "primary_intent",
+    "resolution_status",
+    "sentiment",
+    "extracted_facts",
+    "follow_up_needed"
+  ],
+  "additionalProperties": false
+}

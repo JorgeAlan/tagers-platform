@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#111111" />
+  <title>Tagers Staff — HITL</title>
+  <link rel="manifest" href="./manifest.json" />
+  <link rel="stylesheet" href="./styles.css" />
+</head>
+<body>
+  <main class="wrap">
+    <header class="header">
+      <h1>Tagers Staff</h1>
+      <p class="sub">HITL • Tablet que suena</p>
+      <div id="status" class="status">Estado: <span class="badge">Desconectado</span></div>
+    </header>
+
+    <div id="banner" class="banner hidden"></div>
+
+    <section id="setup" class="card">
+      <h2>Iniciar turno</h2>
+      <p class="hint">Este paso desbloquea audio (iOS) y mantiene la pantalla encendida.</p>
+
+      <label>Sucursal</label>
+      <select id="branchSelect"></select>
+
+      <label>Rol</label>
+      <select id="roleSelect">
+        <option value="GERENTE_SUCURSAL">GERENTE_SUCURSAL</option>
+        <option value="CAJERO">CAJERO</option>
+        <option value="RUNNER">RUNNER</option>
+      </select>
+
+      <label>Token</label>
+      <input id="tokenInput" type="password" placeholder="TAGERS_..._sk_live_..." autocomplete="off" />
+
+      <button id="startBtn" class="primary">INICIAR TURNO / CONECTAR</button>
+      <p id="setupMsg" class="muted"></p>
+    </section>
+
+    <section id="inbox" class="card hidden">
+      <h2>Solicitudes</h2>
+      <div id="reqCard" class="req hidden">
+        <div class="reqTop">
+          <div class="reqTitle">Pregunta</div>
+          <div id="reqMeta" class="reqMeta"></div>
+        </div>
+        <div id="reqText" class="reqText"></div>
+
+        <div id="choices" class="choices"></div>
+
+        <label id="commentLabel">Comentario (opcional)</label>
+        <textarea id="commentInput" rows="3" placeholder="Ej: Está lloviendo ligero, terraza mojada."></textarea>
+
+        <button id="sendBtn" class="primary">ENVIAR RESPUESTA</button>
+        <p id="reqMsg" class="muted"></p>
+      </div>
+
+      <div id="emptyState" class="muted">Sin solicitudes por ahora.</div>
+    </section>
+
+    <footer class="footer muted">
+      <div>Consejo: Mantén esta pantalla abierta durante el turno.</div>
+      <div id="debug"></div>
+    </footer>
+  </main>
+
+  <!-- socket.io client served by the server -->
+  <script src="/socket.io/socket.io.js"></script>
+  <script src="./app.js"></script>
+  <script>
+    if ("serviceWorker" in navigator) {
+      navigator.serviceWorker.register("./service-worker.js").catch(() => {});
+    }
+  </script>
+</body>
+</html>

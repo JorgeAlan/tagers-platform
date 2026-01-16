@@ -1,0 +1,90 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "response_validation",
+  "type": "object",
+  "additionalProperties": false,
+  "description": "Validación de respuesta antes de enviar al cliente",
+  "properties": {
+    "quality_checks": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "answers_question": {
+          "type": "boolean",
+          "description": "¿La respuesta contesta lo que el cliente preguntó?"
+        },
+        "includes_required_info": {
+          "type": "boolean",
+          "description": "¿Incluye toda la información necesaria (listas, opciones, etc)?"
+        },
+        "appropriate_tone": {
+          "type": "boolean",
+          "description": "¿El tono es apropiado para el estado emocional del cliente?"
+        },
+        "not_repetitive": {
+          "type": "boolean",
+          "description": "¿Es diferente a respuestas anteriores que fallaron?"
+        },
+        "clear_next_step": {
+          "type": "boolean",
+          "description": "¿Queda claro qué debe hacer el cliente ahora?"
+        }
+      },
+      "required": ["answers_question", "includes_required_info", "appropriate_tone", "not_repetitive", "clear_next_step"]
+    },
+    "issues_found": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "issue_type": {
+            "type": "string",
+            "enum": [
+              "missing_list",
+              "missing_apology",
+              "too_vague",
+              "wrong_tone",
+              "repeating_failure",
+              "too_many_questions",
+              "missing_info",
+              "missing_proactive_close",
+              "missing_alt_date_option"
+            ],
+            "description": "Tipo de problema encontrado"
+          },
+          "description": {
+            "type": "string",
+            "maxLength": 200,
+            "description": "Descripción del problema"
+          },
+          "severity": {
+            "type": "string",
+            "enum": ["low", "medium", "high"],
+            "description": "Qué tan grave es el problema"
+          }
+        },
+        "required": ["issue_type", "description", "severity"]
+      },
+      "maxItems": 5,
+      "description": "Lista de problemas encontrados en la respuesta"
+    },
+    "verdict": {
+      "type": "string",
+      "enum": ["approve", "needs_revision", "reject"],
+      "description": "Decisión final sobre la respuesta"
+    },
+    "revision_instructions": {
+      "type": ["string", "null"],
+      "maxLength": 500,
+      "description": "Si needs_revision, qué debe cambiar específicamente"
+    },
+    "confidence": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 1,
+      "description": "Confianza en que esta respuesta resolverá el problema del cliente"
+    }
+  },
+  "required": ["quality_checks", "issues_found", "verdict", "revision_instructions", "confidence"]
+}

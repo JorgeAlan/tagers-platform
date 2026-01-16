@@ -1,0 +1,62 @@
+# ═══════════════════════════════════════════════════════════════════════════
+# GOVERNOR ARCHITECTURE - Variables de Entorno
+# ═══════════════════════════════════════════════════════════════════════════
+# Agregar estas variables a tu .env existente
+
+# ───────────────────────────────────────────────────────────────────────────
+# GOVERNOR - Decision Engine
+# ───────────────────────────────────────────────────────────────────────────
+
+# Horario de servicio (opcional - deshabilitado por default)
+GOVERNOR_SERVICE_HOURS_ENABLED=false
+GOVERNOR_SERVICE_HOUR_START=7
+GOVERNOR_SERVICE_HOUR_END=22
+
+# Rate limiting por conversación
+GOVERNOR_RATE_LIMIT_ENABLED=true
+GOVERNOR_MAX_MESSAGES_PER_MINUTE=10
+
+# ───────────────────────────────────────────────────────────────────────────
+# AGENT GATING - Control bot vs agente humano
+# ───────────────────────────────────────────────────────────────────────────
+
+# Minutos sin actividad de agente antes de que bot retome
+BOT_AGENT_TIMEOUT_MINUTES=5
+
+# Habilitar verificación de agente
+BOT_AGENT_GATING_ENABLED=true
+
+# ───────────────────────────────────────────────────────────────────────────
+# ASYNC PROCESSOR - Procesamiento en background
+# ───────────────────────────────────────────────────────────────────────────
+
+# Concurrencia máxima
+ASYNC_MAX_CONCURRENT=5
+ASYNC_MAX_RETRIES=2
+ASYNC_RETRY_DELAY_MS=1000
+
+# Typing indicator mientras procesa
+ASYNC_TYPING_ENABLED=true
+ASYNC_TYPING_INTERVAL_MS=3000
+
+# Timeout de procesamiento
+ASYNC_PROCESSING_TIMEOUT_MS=30000
+
+# ───────────────────────────────────────────────────────────────────────────
+# AI RUNNER - Self-healing para errores de JSON/Zod
+# ───────────────────────────────────────────────────────────────────────────
+
+AI_RUNNER_MAX_RETRIES=2
+AI_RUNNER_RETRY_DELAY_MS=500
+AI_RUNNER_LOG_PROMPT_ON_ERROR=false
+
+# ───────────────────────────────────────────────────────────────────────────
+# HANDOFF - Mapeo de equipos (JSON)
+# ───────────────────────────────────────────────────────────────────────────
+
+# Mapeo branch_id → team_id en Chatwoot
+# Obtener team_ids de: Chatwoot → Settings → Teams
+CHATWOOT_BRANCH_TO_TEAM={"SAN_ANGEL":1,"ANGELOPOLIS":2,"SONATA":3,"ZAVALETA":4,"5_SUR":5,"HQ":6,"DEFAULT":6}
+
+# Mapeo inbox_id → team_id en Chatwoot
+CHATWOOT_INBOX_TO_TEAM={"1":1,"2":2,"DEFAULT":6}

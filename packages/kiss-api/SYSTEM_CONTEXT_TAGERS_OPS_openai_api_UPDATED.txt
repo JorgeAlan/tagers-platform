@@ -1,0 +1,69 @@
+SYSTEM CONTEXT: TAGERS OPS + KISS PRODUCTION API (OpenAI Integration)
+
+Objetivo (esta iteración): convertir el Beacon Protocol en chat interfaces contextuales por rol (Tany/Karla/Ian/Jaziel/Gerentes/Andrés/Jorge) con autoridad por rol y triggers machine→chat (batch finished, web spike, store collapse, end-of-shift), sin exponer llaves de OpenAI en cliente.
+
+Incluye:
+- Microservicio Node.js: /kiss/ingest y /kiss/instructions
+- Model Router (cost vs coherencia)
+- Prompts + JSON Schemas (Structured Outputs)
+- Motor de reglas: routing + autoridad + prioridad (enforce post-LLM)
+- Integraciones: WordPress/WooCommerce + OpenPOS Tampermonkey identity-aware
+- Task-pack JSON para Claude Opus 4.5
+
+1) Problema real resuelto en esta iteración
+- Antes: normalizar señales humanas y generar instrucciones, con foco VIP/shadow inventory.
+- Faltaba: chat contextual por rol, autoridad por rol, Bruno no-operacional, triggers machine→chat.
+- Ahora: routing por matriz (signal_type → target.app), prioridad por severity, cortafuegos post-LLM.
+
+2) Contrato: la matriz como código
+2.1 actor.role (MAYÚSCULAS recomendadas)
+JORGE, ANDRES, TANY, BRUNO, KARLA, IAN, JAZIEL, GERENTE_SUCURSAL, CAJERO, RUNNER, REPARTIDOR, SYSTEM
+
+2.2 instruction.target.app
+CONTROL_TOWER (Tany), APP_OPS_HEAD (Karla), APP_PRODUCTION (Ian), APP_QA (Jaziel), APP_AUDIT (Andrés), SYSTEM (Jorge), APP_BRUNO (Bruno ack), APP_GERENTE/APP_CAJERO/APP_RUNNER
+
+2.3 signal_type mínimo
+CANCEL_REASON, VIP_REQUEST_INTENT, VIP_PRESSURE, OPS_REALLOCATION, PRODUCTION_CONSTRAINT, QUALITY_ISSUE, SHIFT_INCIDENT_LOG, STOCK_DISCREPANCY, OTHER
+
+3) Routing y autoridad (hard)
+3.1 Routing por matriz
+VIP_REQUEST_INTENT → CONTROL_TOWER
+OPS_REALLOCATION → APP_OPS_HEAD
+PRODUCTION_CONSTRAINT → APP_PRODUCTION
+QUALITY_ISSUE → APP_QA
+STOCK_DISCREPANCY → APP_GERENTE
+SHIFT_INCIDENT_LOG → APP_AUDIT (escala a Tany si severidad alta)
+CANCEL_REASON → CONTROL_TOWER
+
+3.2 Autoridad
+- TANY: única con Kill Switch y overrides (pausas, reservas, stock)
+- BRUNO: no-operacional; su señal se vuelve REQUEST_APPROVAL para Tany
+- KARLA: REALLOCATE_STAFF
+- IAN: UPDATE_MAX_DAILY_CAPACITY; si NO puede, escalar a Tany para PAUSE_FUTURE_WEB_SALES
+- JAZIEL: QA binario; BLOCK_VIRTUAL_STOCK_BATCH
+- ANDRES: auditoría/logs; escala solo en HIGH/CRITICAL
+
+4) Triggers machine→chat (sin LLM)
+OPS_TRAFFIC_ALERT → APP_OPS_HEAD
+PRODUCTION_WEB_SPIKE → APP_PRODUCTION
+QA_BATCH_FINISHED → APP_QA
+SHIFT_END_CHECKIN → APP_GERENTE
+
+5) Beacon Protocol (mínimo)
+beacon_id, timestamp_iso, signal_source, location_id, actor.role (+ opcional device_id), human_rlhf_payload o machine_payload.
+
+6) Instruction Protocol (Structured Outputs)
+KissInstruction schema. target.app y priority se fuerzan por el motor de reglas.
+
+7) OpenAI Integration
+Responses API. store:false por defecto.
+
+8) Model Router
+gpt-5-nano (flex) normalización; gpt-5-mini bajo riesgo; gpt-5.2 high/critical.
+
+9) Seguridad
+HMAC inbound; OpenAI key solo backend; tokens por canal (opcional): POS/RADAR/KITCHEN/QA.
+
+10) Integraciones
+OpenPOS Tampermonkey identity-aware (role/location/device). Shortcut manual es para staff POS (no Bruno-style).
+WordPress Bridge: forwarding seguro + tokens por canal.

@@ -1,0 +1,170 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "conversation_analysis",
+  "type": "object",
+  "additionalProperties": false,
+  "description": "Análisis profundo de la conversación para detectar problemas y planificar respuesta",
+  "properties": {
+    "customer_state": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "frustration_level": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1,
+          "description": "0=tranquilo, 0.5=algo frustrado, 1=muy molesto"
+        },
+        "confusion_detected": {
+          "type": "boolean",
+          "description": "El cliente parece confundido o no entendió algo"
+        },
+        "urgency": {
+          "type": "string",
+          "enum": ["low", "medium", "high"],
+          "description": "Qué tan urgente es resolver esto"
+        },
+        "sentiment_keywords": {
+          "type": "array",
+          "items": { "type": "string" },
+          "maxItems": 5,
+          "description": "Palabras clave que indican el estado emocional"
+        }
+      },
+      "required": ["frustration_level", "confusion_detected", "urgency", "sentiment_keywords"]
+    },
+    "conversation_health": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "is_loop_detected": {
+          "type": "boolean",
+          "description": "¿Estamos repitiendo la misma respuesta o pregunta?"
+        },
+        "loop_type": {
+          "type": ["string", "null"],
+          "enum": ["same_question", "missing_info", "misunderstanding", null],
+          "description": "Tipo de loop detectado"
+        },
+        "previous_response_failed": {
+          "type": "boolean",
+          "description": "La respuesta anterior no resolvió lo que el cliente necesitaba"
+        },
+        "failure_reason": {
+          "type": ["string", "null"],
+          "maxLength": 200,
+          "description": "Por qué falló la respuesta anterior"
+        },
+        "turns_without_resolution": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 20,
+          "description": "Cuántos turnos llevamos sin resolver el tema principal"
+        }
+      },
+      "required": ["is_loop_detected", "loop_type", "previous_response_failed", "failure_reason", "turns_without_resolution"]
+    },
+    "customer_needs": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "primary_intent": {
+          "type": "string",
+          "maxLength": 100,
+          "description": "Qué quiere lograr el cliente (en lenguaje natural)"
+        },
+        "missing_info": {
+          "type": "array",
+          "items": { "type": "string" },
+          "maxItems": 5,
+          "description": "Información que falta para ayudar al cliente"
+        },
+        "info_already_provided": {
+          "type": "array",
+          "items": { "type": "string" },
+          "maxItems": 10,
+          "description": "Información que el cliente YA dio (no volver a preguntar)"
+        },
+        "implicit_expectations": {
+          "type": ["string", "null"],
+          "maxLength": 200,
+          "description": "Lo que el cliente espera pero no dijo explícitamente"
+        }
+      },
+      "required": ["primary_intent", "missing_info", "info_already_provided", "implicit_expectations"]
+    },
+    "data_to_retrieve": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "need_branches": {
+          "type": "boolean",
+          "description": "¿Necesito buscar info de sucursales?"
+        },
+        "need_products": {
+          "type": "boolean",
+          "description": "¿Necesito buscar productos/precios?"
+        },
+        "need_promos": {
+          "type": "boolean",
+          "description": "¿Necesito buscar promociones activas?"
+        },
+        "need_faq": {
+          "type": "boolean",
+          "description": "¿Necesito buscar en FAQ?"
+        },
+        "need_hours": {
+          "type": "boolean",
+          "description": "¿Necesito buscar horarios?"
+        },
+        "specific_query": {
+          "type": ["string", "null"],
+          "maxLength": 200,
+          "description": "Búsqueda específica si aplica"
+        }
+      },
+      "required": ["need_branches", "need_products", "need_promos", "need_faq", "need_hours", "specific_query"]
+    },
+    "response_strategy": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "should_apologize": {
+          "type": "boolean",
+          "description": "¿Debo empezar disculpándome?"
+        },
+        "must_include_list": {
+          "type": "boolean",
+          "description": "¿DEBO incluir una lista de opciones (sucursales, productos, etc)?"
+        },
+        "list_type": {
+          "type": ["string", "null"],
+          "enum": ["branches", "products", "sizes", "dates", "options", null],
+          "description": "Qué tipo de lista incluir"
+        },
+        "escalate_to_human": {
+          "type": "boolean",
+          "description": "¿Debo escalar a un agente humano?"
+        },
+        "escalation_reason": {
+          "type": ["string", "null"],
+          "maxLength": 150,
+          "description": "Razón para escalar"
+        },
+        "tone": {
+          "type": "string",
+          "enum": ["friendly", "apologetic", "reassuring", "professional", "urgent"],
+          "description": "Tono que debe tener la respuesta"
+        },
+        "max_questions_to_ask": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 2,
+          "description": "Máximo de preguntas en esta respuesta (0=solo dar info, no preguntar)"
+        }
+      },
+      "required": ["should_apologize", "must_include_list", "list_type", "escalate_to_human", "escalation_reason", "tone", "max_questions_to_ask"]
+    }
+  },
+  "required": ["customer_state", "conversation_health", "customer_needs", "data_to_retrieve", "response_strategy"]
+}

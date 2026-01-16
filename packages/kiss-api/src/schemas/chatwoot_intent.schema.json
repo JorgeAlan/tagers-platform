@@ -1,0 +1,259 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "chatwoot_intent",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "intent": {
+      "type": "string",
+      "enum": [
+        "PHYSICAL_CHECK",
+        "LOST_ITEM_REPORT",
+        "AMENITY_CHECK",
+        "TOURISM_ADVICE",
+        "SENTIMENT_CRISIS",
+        "ORDER_CREATE",
+        "ORDER_STATUS",
+        "ORDER_MODIFY",
+        "CAREERS",
+        "SUPPLIER_INQUIRY",
+        "ALLIANCES_INQUIRY",
+        "RESERVATION_LINK",
+        "GENERAL_INFO",
+        "OTHER"
+      ]
+    },
+    "branch_id": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "enum": [
+        "SAN_ANGEL",
+        "ANGELOPOLIS",
+        "SONATA",
+        "ZAVALETA",
+        "5_SUR",
+        "HQ",
+        null
+      ]
+    },
+    "branch_confidence": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 1
+    },
+    "query_category": {
+      "type": "string",
+      "enum": [
+        "weather",
+        "occupancy",
+        "noise_level",
+        "pet_area_status",
+        "kids_area_status",
+        "parking",
+        "table_availability",
+        "lost_item",
+        "amenities",
+        "tourism",
+        "crisis",
+        "order",
+        "careers",
+        "lead",
+        "other"
+      ]
+    },
+    "order_context": {
+      "type": [
+        "object",
+        "null"
+      ],
+      "additionalProperties": false,
+      "description": "Contexto extraído para flujos de pedido (crear / status / modificar).",
+      "properties": {
+        "product_key": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "maxLength": 40
+        },
+        "product_query": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "maxLength": 160
+        },
+        "quantity": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "minimum": 1,
+          "maximum": 50
+        },
+        "delivery_date_text": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "maxLength": 80
+        },
+        "branch_text": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "maxLength": 80
+        },
+        "order_id": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "minimum": 1
+        },
+        "new_delivery_date_text": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "maxLength": 80
+        },
+        "new_branch_text": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "maxLength": 80
+        }
+      },
+      "required": [
+        "product_key",
+        "product_query",
+        "quantity",
+        "delivery_date_text",
+        "branch_text",
+        "order_id",
+        "new_delivery_date_text",
+        "new_branch_text"
+      ]
+    },
+    "lead_context": {
+      "type": [
+        "object",
+        "null"
+      ],
+      "additionalProperties": false,
+      "description": "Contexto extraído para solicitudes B2B (proveedores / alianzas).",
+      "properties": {
+        "name": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "maxLength": 120
+        },
+        "company": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "maxLength": 160
+        },
+        "email": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "maxLength": 160
+        },
+        "phone": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "maxLength": 40
+        },
+        "message": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "maxLength": 500
+        }
+      },
+      "required": [
+        "name",
+        "company",
+        "email",
+        "phone",
+        "message"
+      ]
+    },
+    "adhoc_object_description": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "maxLength": 160,
+      "description": "Descripción corta del objeto o solicitud para flujos ad-hoc (objetos perdidos / amenidades dinámicas)."
+    },
+    "staff_prompt": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "maxLength": 220,
+      "description": "Pregunta corta para mostrar en la tablet del staff."
+    },
+    "customer_wait_message": {
+      "type": "string",
+      "maxLength": 360,
+      "description": "Mensaje inmediato al cliente mientras se verifica con staff."
+    },
+    "customer_direct_answer": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "maxLength": 900,
+      "description": "Respuesta directa si no se requiere HITL."
+    },
+    "reservation_link": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "maxLength": 300,
+      "description": "Link de OpenTable si aplica."
+    },
+    "needs_clarification": {
+      "type": "boolean",
+      "description": "Si no se pudo inferir sucursal u otra variable crítica."
+    },
+    "clarification_question": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "maxLength": 260
+    }
+  },
+  "required": [
+    "intent",
+    "branch_id",
+    "branch_confidence",
+    "query_category",
+    "staff_prompt",
+    "customer_wait_message",
+    "customer_direct_answer",
+    "reservation_link",
+    "order_context",
+    "lead_context",
+    "adhoc_object_description",
+    "needs_clarification",
+    "clarification_question"
+  ]
+}

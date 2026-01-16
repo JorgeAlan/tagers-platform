@@ -1,0 +1,202 @@
+{
+  "version": "1.2.0",
+  "defaults": {
+    "store": false,
+    "max_output_tokens": 900,
+    "service_tier": "auto"
+  },
+  "tasks": {
+    "normalize_human_signal": {
+      "model": "gpt-5-nano",
+      "service_tier": "flex",
+      "max_output_tokens": 800,
+      "reasoning": {
+        "effort": "low"
+      },
+      "text": {
+        "verbosity": "low"
+      }
+    },
+    "summarize_voice_note": {
+      "model": "gpt-5-mini",
+      "service_tier": "default",
+      "max_output_tokens": 500,
+      "text": {
+        "verbosity": "medium"
+      }
+    },
+    "ops_instruction_low_risk": {
+      "model": "gpt-5-mini",
+      "service_tier": "default",
+      "max_output_tokens": 700,
+      "text": {
+        "verbosity": "medium"
+      }
+    },
+    "ops_instruction_high_risk": {
+      "model": "gpt-5.2",
+      "service_tier": "default",
+      "max_output_tokens": 4000,
+      "reasoning": {
+        "effort": "medium"
+      },
+      "text": {
+        "verbosity": "medium"
+      }
+    },
+    "ops_instruction_critical": {
+      "model": "gpt-5.2",
+      "service_tier": "priority",
+      "max_output_tokens": 8000,
+      "reasoning": {
+        "effort": "high"
+      },
+      "text": {
+        "verbosity": "high"
+      }
+    },
+    "chatwoot_intent": {
+      "model": "gpt-5.2",
+      "service_tier": "priority",
+      "max_output_tokens": 1800,
+      "reasoning": {
+        "effort": "low"
+      },
+      "text": {
+        "verbosity": "low"
+      }
+    },
+    "sentiment_analysis": {
+      "model": "gpt-5-mini",
+      "service_tier": "default",
+      "max_output_tokens": 500,
+      "reasoning": {
+        "effort": "low"
+      },
+      "text": {
+        "verbosity": "low"
+      }
+    },
+    "chatwoot_reply": {
+      "model": "gpt-5.2",
+      "service_tier": "priority",
+      "max_output_tokens": 1200,
+      "reasoning": {
+        "effort": "low"
+      },
+      "text": {
+        "verbosity": "medium"
+      }
+    },
+    "tania_reply": {
+      "model": "gpt-5.2",
+      "service_tier": "priority",
+      "max_output_tokens": 3000,
+      "reasoning": {
+        "effort": "none"
+      },
+      "temperature": 0.3,
+      "text": {
+        "verbosity": "medium"
+      }
+    },
+    "conversation_analyzer": {
+      "model": "gpt-5.2",
+      "service_tier": "priority",
+      "max_output_tokens": 1800,
+      "reasoning": {
+        "effort": "low"
+      },
+      "text": {
+        "verbosity": "medium"
+      }
+    },
+    "response_validator": {
+      "model": "gpt-5.2",
+      "service_tier": "priority",
+      "max_output_tokens": 1500,
+      "reasoning": {
+        "effort": "low"
+      },
+      "text": {
+        "verbosity": "low"
+      }
+    },
+    "incident_report": {
+      "model": "gpt-5.2",
+      "service_tier": "default",
+      "max_output_tokens": 5000,
+      "reasoning": {
+        "effort": "medium"
+      },
+      "text": {
+        "verbosity": "high"
+      }
+    },
+    "code_recommendation": {
+      "model": "gpt-5.2",
+      "service_tier": "default",
+      "max_output_tokens": 8000,
+      "reasoning": {
+        "effort": "high"
+      },
+      "text": {
+        "verbosity": "high"
+      }
+    },
+    "order_step_classifier": {
+      "model": "gpt-5.2",
+      "service_tier": "priority",
+      "max_output_tokens": 700,
+      "reasoning": {
+        "effort": "low"
+      },
+      "text": {
+        "verbosity": "low"
+      },
+      "temperature": 0.0
+    },
+    "flow_control_classifier": {
+      "model": "gpt-5.2",
+      "service_tier": "priority",
+      "max_output_tokens": 700,
+      "reasoning": {
+        "effort": "low"
+      },
+      "text": {
+        "verbosity": "low"
+      },
+      "temperature": 0.0
+    },
+    "conversation_summary": {
+      "model": "gpt-5-mini",
+      "service_tier": "flex",
+      "max_output_tokens": 1500,
+      "reasoning": {
+        "effort": "low"
+      },
+      "text": {
+        "verbosity": "medium"
+      },
+      "temperature": 0.3
+    }
+  },
+  "fallbacks": [
+    {
+      "from": "gpt-5-nano",
+      "to": "gpt-5-mini"
+    },
+    {
+      "from": "gpt-5-mini",
+      "to": "gpt-5.2"
+    },
+    {
+      "from": "gpt-5.2",
+      "to": "gpt-5.1"
+    },
+    {
+      "from": "gpt-5.1",
+      "to": "gpt-4.1"
+    }
+  ]
+}

@@ -1,0 +1,49 @@
+--- /mnt/data/work/tagers-kiss-api-main/tagers-kiss-api-main/src/helpers/smart_response.js	2025-12-27 21:01:56.000000000 +0000
++++ /mnt/data/work/tagers-super/src/helpers/smart_response.js	2025-12-28 00:41:01.142635516 +0000
+@@ -40,6 +40,38 @@
+ }
+ 
+ /**
++ * Obtiene el número de intentos recientes para un (conversationId, step)
++ * sin modificar el contador.
++ */
++export function getAttempts(conversationId, step) {
++  const key = `${conversationId}:${step}`;
++  const now = Date.now();
++
++  // Limpiar entradas viejas (mismo TTL que el contador principal)
++  for (const [k, v] of conversationAttempts.entries()) {
++    if (now - v.timestamp > ATTEMPT_TTL_MS) {
++      conversationAttempts.delete(k);
++    }
++  }
++
++  const entry = conversationAttempts.get(key);
++  if (!entry) return 0;
++  if (now - entry.timestamp > ATTEMPT_TTL_MS) {
++    conversationAttempts.delete(key);
++    return 0;
++  }
++  return entry.count || 0;
++}
++
++/**
++ * Incrementa el número de intentos recientes para un (conversationId, step)
++ * y regresa el conteo actualizado.
++ */
++export function incrementAttempts(conversationId, step) {
++  return getAndIncrementAttempts(conversationId, step);
++}
++
++/**
+  * Reinicia el contador cuando el usuario avanza
+  */
+ export function resetAttempts(conversationId, step) {
+@@ -275,5 +307,7 @@
+   generateSmartResponse,
+   getOrderFlowErrorResponse,
+   getAndIncrementAttempts,
++  getAttempts,
++  incrementAttempts,
+   resetAttempts
+ };

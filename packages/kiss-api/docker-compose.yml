@@ -1,0 +1,75 @@
+version: "3.9"
+services:
+  # ═══════════════════════════════════════════════════════════════════════════
+  # REDIS - Cola de mensajes BullMQ
+  # ═══════════════════════════════════════════════════════════════════════════
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+    volumes:
+      - tagers_redis:/data
+    command: redis-server --appendonly yes
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+
+  # ═══════════════════════════════════════════════════════════════════════════
+  # API PRINCIPAL - Recibe webhooks y encola
+  # ═══════════════════════════════════════════════════════════════════════════
+  kiss_api:
+    build: .
+    ports:
+      - "8787:8787"
+    env_file:
+      - .env
+    environment:
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+      - REDIS_URL=redis://redis:6379
+    depends_on:
+      redis:
+        condition: service_healthy
+      db:
+        condition: service_started
+
+  # ═══════════════════════════════════════════════════════════════════════════
+  # AI WORKER - Procesa mensajes de la cola (opcional: escalar horizontalmente)
+  # ═══════════════════════════════════════════════════════════════════════════
+  ai_worker:
+    build: .
+    command: node src/workers/aiWorker.js
+    env_file:
+      - .env
+    environment:
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+      - REDIS_URL=redis://redis:6379
+      - WORKER_CONCURRENCY=3
+    depends_on:
+      redis:
+        condition: service_healthy
+      db:
+        condition: service_started
+    deploy:
+      replicas: 1  # Escalar según carga: docker-compose up --scale ai_worker=3
+
+  # ═══════════════════════════════════════════════════════════════════════════
+  # DATABASE - PostgreSQL
+  # ═══════════════════════════════════════════════════════════════════════════
+  db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: tagers
+      POSTGRES_PASSWORD: tagers
+      POSTGRES_DB: tagers_kiss
+    ports:
+      - "5432:5432"
+    volumes:
+      - tagers_pg:/var/lib/postgresql/data
+
+volumes:
+  tagers_pg:
+  tagers_redis:

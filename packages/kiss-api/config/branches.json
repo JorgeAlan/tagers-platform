@@ -1,0 +1,93 @@
+{
+  "branches": [
+    {
+      "branch_id": "SAN_ANGEL",
+      "slug": "cdmx-san-angel",
+      "display_name": "CDMX - San Ángel",
+      "city": "CDMX",
+      "reservation_provider": "OPENTABLE",
+      "opentable_url": "https://www.opentable.com/r/tagers-cdmx-san-angel-ciudad-de-mexico",
+      "synonyms": [
+        "san angel",
+        "san ángel",
+        "cdmx",
+        "ciudad de mexico",
+        "av de la paz",
+        "la paz 40"
+      ]
+    },
+    {
+      "branch_id": "ANGELOPOLIS",
+      "slug": "puebla-angelopolis",
+      "display_name": "Puebla - Angelópolis",
+      "city": "Puebla",
+      "reservation_provider": "OPENTABLE",
+      "opentable_url": "https://www.opentable.com/r/tagers-paseo-angelopolis-heroica-puebla-de-zaragoza",
+      "synonyms": [
+        "angelopolis",
+        "angelópolis",
+        "paseo",
+        "osa mayor",
+        "atlixcayotl"
+      ]
+    },
+    {
+      "branch_id": "SONATA",
+      "slug": "puebla-sonata",
+      "display_name": "Puebla - Sonata",
+      "city": "Puebla",
+      "reservation_provider": "OPENTABLE",
+      "opentable_url": "https://www.opentable.com/r/tagers-sonata-san-bernardino-tlaxcalancingo",
+      "synonyms": [
+        "sonata",
+        "lomas",
+        "angelopolis sonata",
+        "escala",
+        "paseo opera"
+      ]
+    },
+    {
+      "branch_id": "ZAVALETA",
+      "slug": "puebla-zavaleta",
+      "display_name": "Puebla - Zavaleta",
+      "city": "Puebla",
+      "reservation_provider": "OPENTABLE",
+      "opentable_url": "https://www.opentable.com/r/tagers-zavaleta-heroica-puebla-de-zaragoza",
+      "synonyms": [
+        "zavaleta",
+        "zava",
+        "calz zavaleta"
+      ]
+    },
+    {
+      "branch_id": "5_SUR",
+      "slug": "puebla-5-sur",
+      "display_name": "Puebla - 5 Sur",
+      "city": "Puebla",
+      "reservation_provider": "OPENTABLE",
+      "opentable_url": "https://www.opentable.com/r/tagers-5-sur-heroica-puebla-de-zaragoza",
+      "synonyms": [
+        "5 sur",
+        "cinco sur",
+        "5sur",
+        "boulevares",
+        "residencial boulevares"
+      ]
+    },
+    {
+      "branch_id": "HQ",
+      "slug": "hq",
+      "display_name": "HQ / Marketing",
+      "city": "Tagers",
+      "reservation_provider": null,
+      "opentable_url": null,
+      "synonyms": [
+        "hq",
+        "marketing",
+        "corporativo",
+        "alianzas",
+        "proveedores"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,189 @@
+{
+  "meta": {
+    "name": "Tagers KISS Production API — Completion Pack",
+    "version": "1.1.0",
+    "target_model": "Claude Opus 4.5",
+    "created_at_iso": "2025-12-23T05:59:00Z"
+  },
+  "context": {
+    "business": {
+      "product": "Rosca de Reyes",
+      "hard_rules": {
+        "fifo": "Sell oldest color first if excellent condition",
+        "colors_are_sale_date": true,
+        "life_days": {
+          "clasica": 2,
+          "nutella": 2,
+          "reina": 2,
+          "dulce_de_leche": 2,
+          "explosion": 1,
+          "lotus": 1
+        },
+        "push_windows": [
+          "2025-12-24",
+          "2025-12-31",
+          "2026-01-02..2026-01-11"
+        ],
+        "pull_only_window": [
+          "2026-01-12..2026-01-18"
+        ],
+        "peak_shaving_sales_window": [
+          "2026-01-02..2026-01-05"
+        ]
+      }
+    },
+    "architecture": {
+      "components": [
+        "WordPress/WooCommerce",
+        "OpenPOS frontend",
+        "KISS Production API (Node) - this repo",
+        "Postgres (optional)"
+      ],
+      "api_endpoints": {
+        "ingest": "POST /kiss/ingest",
+        "instructions": "GET /kiss/instructions?target_app=...&location_id=..."
+      },
+      "security": {
+        "inbound_hmac": "X-Tagers-Timestamp + X-Tagers-Signature (HMAC SHA256 over `${ts}.${rawBody}`)",
+        "no_openai_keys_in_client": true
+      },
+      "role_matrix": {
+        "actor_roles": [
+          "JORGE",
+          "ANDRES",
+          "TANY",
+          "BRUNO",
+          "KARLA",
+          "IAN",
+          "JAZIEL",
+          "GERENTE_SUCURSAL",
+          "CAJERO",
+          "RUNNER",
+          "REPARTIDOR",
+          "SYSTEM"
+        ],
+        "target_apps": [
+          "CONTROL_TOWER",
+          "APP_OPS_HEAD",
+          "APP_PRODUCTION",
+          "APP_QA",
+          "APP_AUDIT",
+          "SYSTEM",
+          "APP_BRUNO",
+          "APP_GERENTE",
+          "APP_CAJERO",
+          "APP_RUNNER"
+        ],
+        "signal_types": [
+          "CANCEL_REASON",
+          "VIP_REQUEST_INTENT",
+          "VIP_PRESSURE",
+          "OPS_REALLOCATION",
+          "PRODUCTION_CONSTRAINT",
+          "QUALITY_ISSUE",
+          "SHIFT_INCIDENT_LOG",
+          "STOCK_DISCREPANCY",
+          "OTHER"
+        ]
+      }
+    }
+  },
+  "repo_notes": {
+    "important_files": [
+      "src/server.js",
+      "src/routes/ingest.js",
+      "src/openai_client.js",
+      "src/model_policy.json",
+      "src/schemas/kiss_instruction.schema.json",
+      "src/schemas/kiss_signal.schema.json",
+      "prompts/kiss_system.md",
+      "src/db/schema.sql",
+      "integrations/wordpress-plugin/tagers-kiss-bridge.php",
+      "integrations/openpos/tampermonkey-pos-guardian.js",
+      "src/engine/rule_engine.js",
+      "src/engine/normalizer.js",
+      "docs/api_examples.md",
+      "docs/ux_tagers_radar.md",
+      "SYSTEM_CONTEXT_TAGERS_OPS_openai_api_UPDATED.md"
+    ]
+  },
+  "tasks": [
+    {
+      "id": "T1_openpos_real_hooks",
+      "priority": "P0",
+      "description": "Adaptar tampermonkey-pos-guardian.js a los eventos/selectores reales de OpenPOS (Angular). Evitar falsos positivos.",
+      "acceptance_criteria": [
+        "Captura cancelación real de ticket",
+        "Muestra popup RLHF solo cuando el POS confirma cancelación",
+        "Envía beacon con order/cart context (si está disponible)",
+        "No rompe checkout ni UI"
+      ]
+    },
+    {
+      "id": "T2_shadow_inventory_actions",
+      "priority": "P0",
+      "description": "Implementar acciones RESERVE_SHADOW_INVENTORY / RELEASE_SHADOW_INVENTORY en Postgres (tabla inventory_shadow) y exponer endpoint interno si aplica.",
+      "acceptance_criteria": [
+        "Upsert por location_id+sku",
+        "Soporta expires_at",
+        "Auditable: guardar reason y beacon_id"
+      ]
+    },
+    {
+      "id": "T3_rule_engine_hard_checks",
+      "priority": "P1",
+      "description": "Agregar validaciones duras post-LLM: si instruction sugiere violar FIFO/ventanas/vida útil, bloquear y reemplazar por escalamiento.",
+      "acceptance_criteria": [
+        "Bloquea acciones prohibidas",
+        "Registra rationale y beacon_id",
+        "Retorna instruction válida de fallback"
+      ]
+    },
+    {
+      "id": "T4_observability",
+      "priority": "P1",
+      "description": "Agregar logs estructurados y métricas básicas: latencia por endpoint, conteo de modelos usados, tasa de fallbacks.",
+      "acceptance_criteria": [
+        "Logs con beacon_id, task, model, service_tier",
+        "Métricas exportables (prometheus o simple endpoint /metrics)"
+      ]
+    },
+    {
+      "id": "T5_machine_to_chat_sources",
+      "priority": "P0",
+      "description": "Estandarizar y documentar signal_source para triggers machine→chat (OPS_TRAFFIC_ALERT, PRODUCTION_WEB_SPIKE, QA_BATCH_FINISHED, SHIFT_END_CHECKIN) y asegurar que el pipeline los genere desde Woo/OpenPOS/monitors.",
+      "acceptance_criteria": [
+        "Docs y ejemplos de beacons por trigger",
+        "No requiere LLM para generar instruction",
+        "UI por app muestra pregunta + opciones correctas"
+      ]
+    },
+    {
+      "id": "T6_authority_policy_hardening",
+      "priority": "P0",
+      "description": "Endurecer el cortafuegos post-LLM: allowlist por target.app + validación de 'kill switch' solo en CONTROL_TOWER. Registrar cuando se elimina/convierte una acción por falta de autoridad.",
+      "acceptance_criteria": [
+        "Bloquea PAUSE_FUTURE_WEB_SALES fuera de CONTROL_TOWER",
+        "Bloquea acciones de inventario fuera de CONTROL_TOWER",
+        "Log estructurado con beacon_id + action_original + target_app"
+      ]
+    },
+    {
+      "id": "T7_myalice_whatsapp_webhook",
+      "priority": "P1",
+      "description": "Agregar endpoint /wp-json/tagers-kiss/v1/myalice-webhook (o en Node) para recibir mensajes entrantes de MyAlice, mapear a beacon y rutear vía KISS (actor.role=CUSTOMER).",
+      "acceptance_criteria": [
+        "Valida origen por token/secret",
+        "Extrae customer_phone, message_text, customer_id",
+        "Crea beacon con signal_source=CUSTOMER_WHATSAPP_MESSAGE",
+        "Normaliza y genera instruction a CONTROL_TOWER o soporte"
+      ]
+    }
+  ],
+  "style_constraints": {
+    "language": "Spanish",
+    "tone": "Business-technical, direct, no fluff",
+    "json_outputs": "Always strict JSON when schema requires",
+    "security": "Never output secrets; use env vars"
+  }
+}

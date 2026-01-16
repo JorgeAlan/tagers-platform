@@ -1,0 +1,68 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://tagers.com/schemas/incident_report.schema.json",
+  "title": "incident_report",
+  "type": "object",
+  "required": [
+    "severity",
+    "summary",
+    "recommended_next_steps",
+    "customer",
+    "branch_id",
+    "conversation_id",
+    "key_points"
+  ],
+  "properties": {
+    "severity": {
+      "type": "string",
+      "enum": [
+        "P1",
+        "P2",
+        "P3"
+      ]
+    },
+    "summary": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 1200
+    },
+    "customer": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "maxLength": 140
+    },
+    "branch_id": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "conversation_id": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "key_points": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "maxLength": 200
+      },
+      "maxItems": 8,
+      "minItems": 0
+    },
+    "recommended_next_steps": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "maxLength": 200
+      },
+      "minItems": 1,
+      "maxItems": 8
+    }
+  },
+  "additionalProperties": false
+}

@@ -1,0 +1,200 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://tagers.com/schemas/kiss_instruction.schema.json",
+  "title": "KissInstruction",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "instruction_id",
+    "beacon_id",
+    "created_at_iso",
+    "target",
+    "priority",
+    "message",
+    "actions",
+    "confidence",
+    "needs_human_clarification",
+    "rationale_bullets"
+  ],
+  "properties": {
+    "instruction_id": {
+      "type": "string",
+      "minLength": 6
+    },
+    "beacon_id": {
+      "type": "string",
+      "minLength": 8
+    },
+    "created_at_iso": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "target": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "app",
+        "location_id"
+      ],
+      "properties": {
+        "app": {
+          "type": "string",
+          "enum": [
+            "APP_RUNNER",
+            "APP_CAJERO",
+            "APP_GERENTE",
+            "CONTROL_TOWER",
+            "APP_OPS_HEAD",
+            "APP_PRODUCTION",
+            "APP_QA",
+            "APP_AUDIT",
+            "APP_BRUNO",
+            "SYSTEM"
+          ]
+        },
+        "location_id": {
+          "type": "string"
+        },
+        "user_id": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      }
+    },
+    "priority": {
+      "type": "string",
+      "enum": [
+        "LOW",
+        "MEDIUM",
+        "HIGH",
+        "CRITICAL"
+      ]
+    },
+    "display": {
+      "type": [
+        "object",
+        "null"
+      ],
+      "additionalProperties": false,
+      "required": [
+        "bg_color",
+        "emoji"
+      ],
+      "properties": {
+        "bg_color": {
+          "type": "string",
+          "pattern": "^#?[0-9A-Fa-f]{6}$"
+        },
+        "emoji": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 4
+        },
+        "ttl_seconds": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "minimum": 1
+        }
+      }
+    },
+    "message": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 360
+    },
+    "actions": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "type",
+          "params"
+        ],
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": [
+              "NONE",
+              "LOG_ONLY",
+              "REQUEST_MORE_INFO",
+              "ALERT_FIFO",
+              "ALERT_STOCKOUT",
+              "RESERVE_SHADOW_INVENTORY",
+              "RELEASE_SHADOW_INVENTORY",
+              "ESCALATE_TO_CONTROL_TOWER",
+              "REQUEST_APPROVAL",
+              "REALLOCATE_STAFF",
+              "UPDATE_MAX_DAILY_CAPACITY",
+              "PAUSE_FUTURE_WEB_SALES",
+              "BLOCK_VIRTUAL_STOCK_BATCH",
+              "CREATE_INCIDENT_LOG"
+            ]
+          },
+          "params": {
+            "type": "object",
+            "additionalProperties": true
+          }
+        }
+      }
+    },
+    "confidence": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 1
+    },
+    "needs_human_clarification": {
+      "type": "boolean"
+    },
+    "clarification_question": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "maxLength": 240
+    },
+    "rationale_bullets": {
+      "type": "array",
+      "maxItems": 3,
+      "items": {
+        "type": "string",
+        "maxLength": 160
+      }
+    },
+    "model_trace": {
+      "type": [
+        "object",
+        "null"
+      ],
+      "additionalProperties": false,
+      "required": [
+        "model",
+        "service_tier"
+      ],
+      "properties": {
+        "model": {
+          "type": "string"
+        },
+        "service_tier": {
+          "type": "string"
+        },
+        "tokens_in": {
+          "type": [
+            "integer",
+            "null"
+          ]
+        },
+        "tokens_out": {
+          "type": [
+            "integer",
+            "null"
+          ]
+        }
+      }
+    }
+  }
+}

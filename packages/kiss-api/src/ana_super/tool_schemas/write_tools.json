@@ -1,0 +1,254 @@
+[
+  {
+    "type": "function",
+    "strict": true,
+    "function": {
+      "name": "issue_order_write_capability",
+      "description": "WRITE. Emite capability token efímero (2 min TTL) para autorizar una acción. Requiere que el usuario haya escrito la frase de confirmación.",
+      "parameters": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "order_id": {
+            "type": "integer",
+            "minimum": 1,
+            "description": "ID del pedido"
+          },
+          "action": {
+            "type": "string",
+            "enum": [
+              "RESCHEDULE_DELIVERY_DATE",
+              "CHANGE_BRANCH",
+              "CANCEL_ORDER"
+            ],
+            "description": "Acción a autorizar"
+          },
+          "user_confirmation_detected": {
+            "type": "boolean",
+            "description": "True si el usuario escribió 'CONFIRMAR CAMBIO' o equivalente"
+          }
+        },
+        "required": ["order_id", "action", "user_confirmation_detected"]
+      }
+    }
+  },
+  {
+    "type": "function",
+    "strict": true,
+    "function": {
+      "name": "reserve_stock_for_reschedule",
+      "description": "WRITE. Crea reserva temporal de stock (TTL 30s) para evitar race conditions. Llamar ANTES de pedir confirmación al usuario.",
+      "parameters": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "variation_id": {
+            "type": ["integer", "null"],
+            "minimum": 1,
+            "description": "ID de variación"
+          },
+          "product_id": {
+            "type": ["integer", "null"],
+            "minimum": 1,
+            "description": "ID de producto"
+          },
+          "branch_id": {
+            "type": "string",
+            "minLength": 2,
+            "maxLength": 32,
+            "description": "ID de sucursal"
+          },
+          "delivery_date": {
+            "type": "string",
+            "pattern": "^\\d{4}-\\d{2}-\\d{2}$",
+            "description": "Fecha ISO (YYYY-MM-DD)"
+          },
+          "quantity": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 50,
+            "description": "Cantidad a reservar"
+          },
+          "ttl_seconds": {
+            "type": ["integer", "null"],
+            "minimum": 10,
+            "maximum": 120,
+            "description": "TTL de reserva en segundos (default 30)"
+          }
+        },
+        "required": ["variation_id", "product_id", "branch_id", "delivery_date", "quantity", "ttl_seconds"]
+      }
+    }
+  },
+  {
+    "type": "function",
+    "strict": true,
+    "function": {
+      "name": "execute_reschedule",
+      "description": "WRITE. Ejecuta cambio de fecha. Revalida ownership + policy + stock en el momento. Requiere capability token.",
+      "parameters": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "order_id": {
+            "type": "integer",
+            "minimum": 1,
+            "description": "ID del pedido"
+          },
+          "new_delivery_date": {
+            "type": "string",
+            "pattern": "^\\d{4}-\\d{2}-\\d{2}$",
+            "description": "Nueva fecha ISO (YYYY-MM-DD)"
+          },
+          "new_branch_id": {
+            "type": ["string", "null"],
+            "minLength": 2,
+            "maxLength": 32,
+            "description": "Nueva sucursal (opcional)"
+          },
+          "capability_token": {
+            "type": "string",
+            "minLength": 20,
+            "maxLength": 512,
+            "description": "Token de issue_order_write_capability"
+          },
+          "reservation_id": {
+            "type": ["string", "null"],
+            "minLength": 8,
+            "maxLength": 128,
+            "description": "ID de reserva de stock (recomendado)"
+          },
+          "idempotency_key": {
+            "type": "string",
+            "minLength": 12,
+            "maxLength": 64,
+            "pattern": "^[a-zA-Z0-9_-]+$",
+            "description": "Clave única para evitar doble ejecución"
+          }
+        },
+        "required": ["order_id", "new_delivery_date", "new_branch_id", "capability_token", "reservation_id", "idempotency_key"]
+      }
+    }
+  },
+  {
+    "type": "function",
+    "strict": true,
+    "function": {
+      "name": "execute_branch_change",
+      "description": "WRITE. Cambia sucursal de un pedido. Revalida todo en el momento.",
+      "parameters": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "order_id": {
+            "type": "integer",
+            "minimum": 1,
+            "description": "ID del pedido"
+          },
+          "new_branch_id": {
+            "type": "string",
+            "minLength": 2,
+            "maxLength": 32,
+            "description": "Nueva sucursal"
+          },
+          "capability_token": {
+            "type": "string",
+            "minLength": 20,
+            "maxLength": 512,
+            "description": "Token de autorización"
+          },
+          "idempotency_key": {
+            "type": "string",
+            "minLength": 12,
+            "maxLength": 64,
+            "pattern": "^[a-zA-Z0-9_-]+$",
+            "description": "Clave única"
+          }
+        },
+        "required": ["order_id", "new_branch_id", "capability_token", "idempotency_key"]
+      }
+    }
+  },
+  {
+    "type": "function",
+    "strict": true,
+    "function": {
+      "name": "execute_order_cancel",
+      "description": "WRITE. Cancela un pedido. Acción irreversible.",
+      "parameters": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "order_id": {
+            "type": "integer",
+            "minimum": 1,
+            "description": "ID del pedido"
+          },
+          "cancel_reason": {
+            "type": "string",
+            "enum": [
+              "CUSTOMER_REQUEST",
+              "OUT_OF_STOCK",
+              "DUPLICATE_ORDER",
+              "PAYMENT_FAILED",
+              "OTHER"
+            ],
+            "description": "Razón de cancelación"
+          },
+          "capability_token": {
+            "type": "string",
+            "minLength": 20,
+            "maxLength": 512,
+            "description": "Token de autorización"
+          },
+          "idempotency_key": {
+            "type": "string",
+            "minLength": 12,
+            "maxLength": 64,
+            "pattern": "^[a-zA-Z0-9_-]+$",
+            "description": "Clave única"
+          }
+        },
+        "required": ["order_id", "cancel_reason", "capability_token", "idempotency_key"]
+      }
+    }
+  },
+  {
+    "type": "function",
+    "strict": true,
+    "function": {
+      "name": "escalate_to_human",
+      "description": "WRITE. Escala la conversación a un agente humano via HITL. Usar cuando el cliente lo pide o cuando hay situación compleja.",
+      "parameters": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "reason": {
+            "type": "string",
+            "enum": [
+              "CUSTOMER_REQUEST",
+              "COMPLEX_ISSUE",
+              "FRUSTRATED_CUSTOMER",
+              "POLICY_EXCEPTION",
+              "TECHNICAL_ERROR",
+              "PAYMENT_ISSUE"
+            ],
+            "description": "Razón de escalación"
+          },
+          "context_summary": {
+            "type": "string",
+            "minLength": 10,
+            "maxLength": 500,
+            "description": "Resumen del contexto para el agente humano"
+          },
+          "priority": {
+            "type": "string",
+            "enum": ["LOW", "MEDIUM", "HIGH", "URGENT"],
+            "description": "Prioridad de atención"
+          }
+        },
+        "required": ["reason", "context_summary", "priority"]
+      }
+    }
+  }
+]

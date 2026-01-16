@@ -1,0 +1,53 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://tagers.com/schemas/tania_reply.schema.json",
+  "title": "tania_reply",
+  "type": "object",
+  "required": [
+    "customer_message",
+    "confidence",
+    "used_promo",
+    "recommended_branches"
+  ],
+  "properties": {
+    "customer_message": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 1800
+    },
+    "confidence": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 1
+    },
+    "used_promo": {
+      "type": "boolean"
+    },
+    "recommended_branches": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "branch_id",
+          "reason"
+        ],
+        "properties": {
+          "branch_id": {
+            "type": "string"
+          },
+          "reason": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "maxLength": 140
+          }
+        },
+        "additionalProperties": false
+      },
+      "maxItems": 3,
+      "minItems": 0
+    }
+  },
+  "additionalProperties": false
+}

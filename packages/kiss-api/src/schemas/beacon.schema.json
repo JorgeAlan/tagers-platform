@@ -1,0 +1,89 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://tagers.com/schemas/beacon.schema.json",
+  "title": "TagersBeacon",
+  "type": "object",
+  "required": [
+    "beacon_id",
+    "timestamp_iso",
+    "signal_source",
+    "location_id"
+  ],
+  "properties": {
+    "beacon_id": {
+      "type": "string",
+      "minLength": 8
+    },
+    "timestamp_iso": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "signal_source": {
+      "type": "string",
+      "minLength": 3
+    },
+    "location_id": {
+      "type": "string",
+      "minLength": 2
+    },
+    "actor": {
+      "type": "object",
+      "required": [
+        "role"
+      ],
+      "properties": {
+        "role": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "id": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": true
+    },
+    "human_rlhf_payload": {
+      "type": "object",
+      "properties": {
+        "ui_type": {
+          "type": "string"
+        },
+        "question": {
+          "type": "string"
+        },
+        "response_value": {
+          "type": [
+            "string",
+            "number",
+            "boolean",
+            "object",
+            "array",
+            "null"
+          ]
+        },
+        "response_type": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": true
+    },
+    "machine_payload": {
+      "type": [
+        "object",
+        "array",
+        "string",
+        "number",
+        "boolean",
+        "null"
+      ],
+      "additionalProperties": true
+    },
+    "metadata": {
+      "type": "object",
+      "additionalProperties": true
+    }
+  },
+  "additionalProperties": true
+}

@@ -1,0 +1,252 @@
+[
+  {
+    "type": "function",
+    "strict": true,
+    "function": {
+      "name": "get_sheet_policy",
+      "description": "READ. Lee una regla/política desde el Cerebro Legislativo (Google Sheets / Config Hub). Solo lectura. Usar ANTES de cualquier acción.",
+      "parameters": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "policy_key": {
+            "type": "string",
+            "enum": [
+              "ORDER_RESCHEDULE_ALLOWED",
+              "ORDER_BRANCH_CHANGE_ALLOWED",
+              "ORDER_CANCEL_ALLOWED",
+              "ORDER_MODIFY_REQUIRE_PAID",
+              "ORDER_MODIFY_CONFIRM_TTL_SECONDS",
+              "ORDER_MODIFY_CUTOFF_HOURS",
+              "RESCHEDULE_MAX_CHANGES",
+              "REFUND_POLICY",
+              "PROMOTION_ACTIVE",
+              "BRANCH_HOURS"
+            ],
+            "description": "Clave de política a consultar"
+          },
+          "branch_id": {
+            "type": ["string", "null"],
+            "minLength": 2,
+            "maxLength": 32,
+            "description": "ID de sucursal para override de política (opcional)"
+          }
+        },
+        "required": ["policy_key", "branch_id"]
+      }
+    }
+  },
+  {
+    "type": "function",
+    "strict": true,
+    "function": {
+      "name": "get_order_details",
+      "description": "READ. Obtiene detalles del pedido desde WooCommerce (estado, items, fecha/sucursal actual). Requiere ownership verificado.",
+      "parameters": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "order_id": {
+            "type": "integer",
+            "minimum": 1,
+            "description": "ID numérico del pedido WooCommerce"
+          }
+        },
+        "required": ["order_id"]
+      }
+    }
+  },
+  {
+    "type": "function",
+    "strict": true,
+    "function": {
+      "name": "verify_order_ownership",
+      "description": "READ. Verifica que el usuario autenticado es propietario del pedido. OBLIGATORIO antes de cualquier escritura. Retorna 404-style si no es dueño (anti-enumeration).",
+      "parameters": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "order_id": {
+            "type": "integer",
+            "minimum": 1,
+            "description": "ID del pedido a verificar"
+          },
+          "identity_phone": {
+            "type": ["string", "null"],
+            "minLength": 8,
+            "maxLength": 20,
+            "description": "Teléfono del usuario (de Chatwoot contact)"
+          },
+          "identity_email": {
+            "type": ["string", "null"],
+            "minLength": 5,
+            "maxLength": 254,
+            "description": "Email del usuario (fallback)"
+          },
+          "identity_jwt_sub": {
+            "type": ["string", "null"],
+            "minLength": 1,
+            "maxLength": 128,
+            "description": "Subject del JWT del usuario (si existe)"
+          }
+        },
+        "required": ["order_id", "identity_phone", "identity_email", "identity_jwt_sub"]
+      }
+    }
+  },
+  {
+    "type": "function",
+    "strict": true,
+    "function": {
+      "name": "list_customer_orders",
+      "description": "READ. Lista pedidos del cliente autenticado. La identidad viene del contexto de Chatwoot.",
+      "parameters": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "limit": {
+            "type": ["integer", "null"],
+            "minimum": 1,
+            "maximum": 10,
+            "description": "Máximo de pedidos (default 5)"
+          },
+          "status_filter": {
+            "type": ["array", "null"],
+            "items": {
+              "type": "string",
+              "enum": ["pending", "processing", "on-hold", "completed", "cancelled"]
+            },
+            "description": "Filtrar por estados"
+          }
+        },
+        "required": ["limit", "status_filter"]
+      }
+    }
+  },
+  {
+    "type": "function",
+    "strict": true,
+    "function": {
+      "name": "check_variation_stock",
+      "description": "READ. Consulta disponibilidad REAL en WooCommerce para variación + sucursal + fecha. Fuente de verdad física.",
+      "parameters": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "product_id": {
+            "type": ["integer", "null"],
+            "minimum": 1,
+            "description": "ID de producto"
+          },
+          "variation_id": {
+            "type": ["integer", "null"],
+            "minimum": 1,
+            "description": "ID de variación"
+          },
+          "product_key": {
+            "type": ["string", "null"],
+            "minLength": 1,
+            "maxLength": 64,
+            "description": "Clave interna del producto"
+          },
+          "branch_id": {
+            "type": "string",
+            "minLength": 2,
+            "maxLength": 32,
+            "description": "ID de sucursal"
+          },
+          "delivery_date": {
+            "type": "string",
+            "pattern": "^\\d{4}-\\d{2}-\\d{2}$",
+            "description": "Fecha ISO (YYYY-MM-DD)"
+          },
+          "quantity": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 50,
+            "description": "Cantidad a validar"
+          }
+        },
+        "required": ["product_id", "variation_id", "product_key", "branch_id", "delivery_date", "quantity"]
+      }
+    }
+  },
+  {
+    "type": "function",
+    "strict": true,
+    "function": {
+      "name": "list_available_delivery_dates",
+      "description": "READ. Lista fechas de entrega disponibles con stock. Usar para mostrar opciones al cliente.",
+      "parameters": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "branch_id": {
+            "type": ["string", "null"],
+            "minLength": 2,
+            "maxLength": 32,
+            "description": "Filtrar por sucursal"
+          },
+          "product_id": {
+            "type": ["integer", "null"],
+            "minimum": 1,
+            "description": "Filtrar por producto"
+          },
+          "quantity": {
+            "type": ["integer", "null"],
+            "minimum": 1,
+            "maximum": 50,
+            "description": "Cantidad requerida"
+          },
+          "limit": {
+            "type": ["integer", "null"],
+            "minimum": 1,
+            "maximum": 20,
+            "description": "Máximo de fechas (default 8)"
+          }
+        },
+        "required": ["branch_id", "product_id", "quantity", "limit"]
+      }
+    }
+  },
+  {
+    "type": "function",
+    "strict": true,
+    "function": {
+      "name": "get_order_reschedule_context",
+      "description": "READ. Obtiene contexto completo para reprogramar: items con variation_id, cantidad, sucursal, fecha actual. Requiere ownership.",
+      "parameters": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "order_id": {
+            "type": "integer",
+            "minimum": 1,
+            "description": "ID del pedido"
+          }
+        },
+        "required": ["order_id"]
+      }
+    }
+  },
+  {
+    "type": "function",
+    "strict": true,
+    "function": {
+      "name": "list_branches",
+      "description": "READ. Lista sucursales disponibles con horarios y dirección.",
+      "parameters": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "city_filter": {
+            "type": ["string", "null"],
+            "enum": ["PUEBLA", "CDMX", null],
+            "description": "Filtrar por ciudad"
+          }
+        },
+        "required": ["city_filter"]
+      }
+    }
+  }
+]

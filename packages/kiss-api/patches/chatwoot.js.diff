@@ -1,0 +1,108 @@
+--- /mnt/data/work/tagers-kiss-api-main/tagers-kiss-api-main/src/routes/chatwoot.js	2025-12-27 21:01:56.000000000 +0000
++++ /mnt/data/work/tagers-super/src/routes/chatwoot.js	2025-12-28 00:40:48.017973500 +0000
+@@ -21,8 +21,13 @@
+ import { retrieveTourismCandidates, augmentTourismCandidatesWithNearestBranch } from "../tania/tourism_kb.js";
+ import { runAgenticFlow, addToConversationHistory, getConversationHistory, markResponseAsFailed } from "../tania/agentic_flow.js";
+ import { getFormattedBranches, formatBranchList, findBranchByInput, getBranchQuestionMessage, getBranchErrorMessage } from "../helpers/branch_helper.js";
+-import { getOrderFlowErrorResponse, getFrustrationLevel, resetAttempts } from "../helpers/smart_response.js";
++import { getOrderFlowErrorResponse, getFrustrationLevel, resetAttempts, getAttempts, incrementAttempts } from "../helpers/smart_response.js";
+ import { matchDateFromText, normalizeDate } from "../helpers/date_normalizer.js";
++import {
++  isSecureOrderModifyEnabled,
++  createSecureOrderModifyState,
++  makeSecureOrderModifyHandlers,
++} from "../ana_super/order_modify_secure_flow.js";
+ 
+ function resolve(rel) {
+   return path.join(process.cwd(), rel);
+@@ -109,6 +114,14 @@
+   _flowStore.delete(String(conversationId));
+ }
+ 
++// Secure ORDER_MODIFY handlers (feature-flagged)
++const __secureOrderModifyHandlers = makeSecureOrderModifyHandlers({
++  setFlow,
++  clearFlow,
++  sendChatwootMessage,
++  hitlEnabled: !!config.hitl?.enabled,
++});
++
+ function isCancelMessage(text) {
+   const t = String(text || "").toLowerCase();
+   return (
+@@ -821,6 +834,20 @@
+   }
+ 
+   if (activeFlow.flow === "ORDER_MODIFY") {
++    if (activeFlow.secure && isSecureOrderModifyEnabled()) {
++      return await __secureOrderModifyHandlers.handleOrderModifySecureFlow({
++        state: activeFlow,
++        assistant,
++        csInfo,
++        accountId,
++        conversationId,
++        inboxId,
++        inboxName,
++        contact,
++        messageText,
++      });
++    }
++
+     return await handleOrderModifyFlow({
+       state: activeFlow,
+       assistant,
+@@ -931,19 +958,42 @@
+   }
+ 
+   if (intent.intent === "ORDER_MODIFY") {
+-    const state = {
+-      flow: "ORDER_MODIFY",
+-      step: "INIT",
+-      draft: {
+-        order_id: orderCtx?.order_id || null,
+-        new_fecha_text: orderCtx?.new_delivery_date_text || null,
+-        new_sucursal_text: orderCtx?.new_branch_text || null,
+-      },
+-      options: {},
+-      createdAt: _now(),
+-    };
++    const secureEnabled = isSecureOrderModifyEnabled();
++
++    const state = secureEnabled
++      ? createSecureOrderModifyState({ order_context: orderCtx })
++      : {
++          flow: "ORDER_MODIFY",
++          step: "INIT",
++          draft: {
++            order_id: orderCtx?.order_id || null,
++            new_fecha_text: orderCtx?.new_delivery_date_text || null,
++            new_sucursal_text: orderCtx?.new_branch_text || null,
++          },
++          options: {},
++          createdAt: _now(),
++        };
++
++    // Normalize shape
++    if (!state.createdAt) state.createdAt = _now();
++
+     setFlow(conversationId, state);
+-    await advanceOrderModifyFlow({ state, assistant, csInfo, accountId, conversationId, contact, messageText });
++
++    if (secureEnabled && state.secure) {
++      await __secureOrderModifyHandlers.advanceOrderModifySecureFlow({
++        state,
++        assistant,
++        csInfo,
++        accountId,
++        conversationId,
++        contact,
++        messageText,
++        inboxId,
++        inboxName,
++      });
++    } else {
++      await advanceOrderModifyFlow({ state, assistant, csInfo, accountId, conversationId, contact, messageText });
++    }
+     return true;
+   }
+ 

@@ -1,0 +1,42 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "hitl_customer_reply",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "customer_message": {
+      "type": "string",
+      "maxLength": 900
+    },
+    "should_offer_reservation_link": {
+      "type": "boolean"
+    },
+    "reservation_branch_id": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "enum": [
+        "SAN_ANGEL",
+        "ANGELOPOLIS",
+        "SONATA",
+        "ZAVALETA",
+        "5_SUR",
+        null
+      ]
+    },
+    "notes_for_staff": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "maxLength": 600
+    }
+  },
+  "required": [
+    "customer_message",
+    "should_offer_reservation_link",
+    "reservation_branch_id",
+    "notes_for_staff"
+  ]
+}
