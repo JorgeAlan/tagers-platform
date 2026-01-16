@@ -9,7 +9,6 @@
     "start": "node src/server.js",
     "dev": "node --watch src/server.js",
     "worker": "node src/workers/aiWorker.js",
-    "test:integrity": "node test_integrity.js",
     "staging:hitl-smoke": "node scripts/staging_e2e_hitl_smoke.mjs",
     "config:sync": "node -e \"import('./src/config-hub/sync-service.js').then(m => m.syncConfig({force:true}))\"",
     "config:validate": "node -e \"import('./src/config-hub/sheets-reader.js').then(m => m.testConnection().then(console.log))\""
@@ -42,6 +41,7 @@
     "langsmith": "^0.2.14",
     "multer": "^1.4.5-lts.1",
     "node-cron": "^3.0.3",
+    "node-fetch": "^3.3.2",
     "openai": "^5.0.0",
     "p-queue": "^8.0.0",
     "pg": "^8.12.0",
