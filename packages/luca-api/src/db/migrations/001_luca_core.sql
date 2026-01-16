@@ -1,14 +1,7 @@
 -- ═══════════════════════════════════════════════════════════════════════════
--- LUCA SCHEMA - Initial Migration (Simplified - No PL/pgSQL functions)
+-- LUCA SCHEMA - Initial Migration (Simplified)
 -- ═══════════════════════════════════════════════════════════════════════════
--- 
--- IDs (case_id, alert_id, action_id) are generated from JavaScript code
--- to avoid PL/pgSQL parsing issues with the migration system.
--- 
--- ═══════════════════════════════════════════════════════════════════════════
-
--- ═══════════════════════════════════════════════════════════════════════════
--- CASES - Investigaciones
+-- IDs se generan en codigo JavaScript, no con funciones PL/pgSQL
 -- ═══════════════════════════════════════════════════════════════════════════
 
 CREATE TABLE IF NOT EXISTS luca_cases (
@@ -35,18 +28,6 @@ CREATE TABLE IF NOT EXISTS luca_cases (
   closed_by TEXT
 );
 
-CREATE INDEX IF NOT EXISTS idx_luca_cases_state ON luca_cases(state);
-
-CREATE INDEX IF NOT EXISTS idx_luca_cases_type ON luca_cases(case_type);
-
-CREATE INDEX IF NOT EXISTS idx_luca_cases_severity ON luca_cases(severity);
-
-CREATE INDEX IF NOT EXISTS idx_luca_cases_created ON luca_cases(created_at DESC);
-
--- ═══════════════════════════════════════════════════════════════════════════
--- ALERTS - Alertas
--- ═══════════════════════════════════════════════════════════════════════════
-
 CREATE TABLE IF NOT EXISTS luca_alerts (
   id SERIAL PRIMARY KEY,
   alert_id TEXT NOT NULL UNIQUE,
@@ -70,20 +51,6 @@ CREATE TABLE IF NOT EXISTS luca_alerts (
   resolved_by TEXT,
   expires_at TIMESTAMPTZ
 );
-
-CREATE INDEX IF NOT EXISTS idx_luca_alerts_state ON luca_alerts(state);
-
-CREATE INDEX IF NOT EXISTS idx_luca_alerts_severity ON luca_alerts(severity);
-
-CREATE INDEX IF NOT EXISTS idx_luca_alerts_branch ON luca_alerts(branch_id);
-
-CREATE INDEX IF NOT EXISTS idx_luca_alerts_fingerprint ON luca_alerts(fingerprint);
-
-CREATE INDEX IF NOT EXISTS idx_luca_alerts_created ON luca_alerts(created_at DESC);
-
--- ═══════════════════════════════════════════════════════════════════════════
--- ACTIONS - Acciones propuestas/ejecutadas
--- ═══════════════════════════════════════════════════════════════════════════
 
 CREATE TABLE IF NOT EXISTS luca_actions (
   id SERIAL PRIMARY KEY,
@@ -110,14 +77,6 @@ CREATE TABLE IF NOT EXISTS luca_actions (
   executed_by TEXT
 );
 
-CREATE INDEX IF NOT EXISTS idx_luca_actions_state ON luca_actions(state);
-
-CREATE INDEX IF NOT EXISTS idx_luca_actions_case ON luca_actions(case_id);
-
--- ═══════════════════════════════════════════════════════════════════════════
--- MEMORY - Memoria episódica
--- ═══════════════════════════════════════════════════════════════════════════
-
 CREATE TABLE IF NOT EXISTS luca_memory_episodes (
   id SERIAL PRIMARY KEY,
   episode_id TEXT NOT NULL UNIQUE,
@@ -131,16 +90,6 @@ CREATE TABLE IF NOT EXISTS luca_memory_episodes (
   created_at TIMESTAMPTZ DEFAULT NOW(),
   valid_until TIMESTAMPTZ
 );
-
-CREATE INDEX IF NOT EXISTS idx_luca_memory_type ON luca_memory_episodes(episode_type);
-
-CREATE INDEX IF NOT EXISTS idx_luca_memory_tags ON luca_memory_episodes USING GIN(tags);
-
-CREATE INDEX IF NOT EXISTS idx_luca_memory_branch ON luca_memory_episodes(branch_id);
-
--- ═══════════════════════════════════════════════════════════════════════════
--- PLAYBOOKS - Reglas de acción automática
--- ═══════════════════════════════════════════════════════════════════════════
 
 CREATE TABLE IF NOT EXISTS luca_playbooks (
   id SERIAL PRIMARY KEY,
@@ -162,14 +111,6 @@ CREATE TABLE IF NOT EXISTS luca_playbooks (
   created_by TEXT
 );
 
-CREATE INDEX IF NOT EXISTS idx_luca_playbooks_enabled ON luca_playbooks(enabled);
-
-CREATE INDEX IF NOT EXISTS idx_luca_playbooks_trigger ON luca_playbooks(trigger_type);
-
--- ═══════════════════════════════════════════════════════════════════════════
--- TOWER USERS - Usuarios del Control Tower
--- ═══════════════════════════════════════════════════════════════════════════
-
 CREATE TABLE IF NOT EXISTS tower_users (
   id SERIAL PRIMARY KEY,
   user_id TEXT NOT NULL UNIQUE,
@@ -187,14 +128,6 @@ CREATE TABLE IF NOT EXISTS tower_users (
   updated_at TIMESTAMPTZ DEFAULT NOW()
 );
 
-CREATE INDEX IF NOT EXISTS idx_tower_users_role ON tower_users(role);
-
-CREATE INDEX IF NOT EXISTS idx_tower_users_active ON tower_users(active);
-
--- ═══════════════════════════════════════════════════════════════════════════
--- TOWER SESSIONS - Sesiones de usuario
--- ═══════════════════════════════════════════════════════════════════════════
-
 CREATE TABLE IF NOT EXISTS tower_sessions (
   id SERIAL PRIMARY KEY,
   session_id TEXT NOT NULL UNIQUE,
@@ -207,14 +140,6 @@ CREATE TABLE IF NOT EXISTS tower_sessions (
   last_activity_at TIMESTAMPTZ DEFAULT NOW()
 );
 
-CREATE INDEX IF NOT EXISTS idx_tower_sessions_user ON tower_sessions(user_id);
-
-CREATE INDEX IF NOT EXISTS idx_tower_sessions_expires ON tower_sessions(expires_at);
-
--- ═══════════════════════════════════════════════════════════════════════════
--- AUDIT LOG - Log de auditoría
--- ═══════════════════════════════════════════════════════════════════════════
-
 CREATE TABLE IF NOT EXISTS luca_audit_log (
   id SERIAL PRIMARY KEY,
   actor_type TEXT NOT NULL,
@@ -226,16 +151,6 @@ CREATE TABLE IF NOT EXISTS luca_audit_log (
   context JSONB DEFAULT '{}',
   created_at TIMESTAMPTZ DEFAULT NOW()
 );
-
-CREATE INDEX IF NOT EXISTS idx_luca_audit_actor ON luca_audit_log(actor_type, actor_id);
-
-CREATE INDEX IF NOT EXISTS idx_luca_audit_target ON luca_audit_log(target_type, target_id);
-
-CREATE INDEX IF NOT EXISTS idx_luca_audit_created ON luca_audit_log(created_at DESC);
-
--- ═══════════════════════════════════════════════════════════════════════════
--- SYNC TABLES - Espejo de datos de Redshift
--- ═══════════════════════════════════════════════════════════════════════════
 
 CREATE TABLE IF NOT EXISTS sync_sales_daily (
   id SERIAL PRIMARY KEY,
@@ -251,10 +166,6 @@ CREATE TABLE IF NOT EXISTS sync_sales_daily (
   UNIQUE(fecha, branch_id)
 );
 
-CREATE INDEX IF NOT EXISTS idx_sync_sales_daily_fecha ON sync_sales_daily(fecha DESC);
-
-CREATE INDEX IF NOT EXISTS idx_sync_sales_daily_branch ON sync_sales_daily(branch_id);
-
 CREATE TABLE IF NOT EXISTS sync_sales_hourly (
   id SERIAL PRIMARY KEY,
   fecha DATE NOT NULL,
@@ -265,8 +176,6 @@ CREATE TABLE IF NOT EXISTS sync_sales_hourly (
   synced_at TIMESTAMPTZ DEFAULT NOW(),
   UNIQUE(fecha, hora, branch_id)
 );
-
-CREATE INDEX IF NOT EXISTS idx_sync_sales_hourly_fecha ON sync_sales_hourly(fecha DESC);
 
 CREATE TABLE IF NOT EXISTS sync_descuentos (
   id SERIAL PRIMARY KEY,
@@ -281,24 +190,16 @@ CREATE TABLE IF NOT EXISTS sync_descuentos (
   UNIQUE(fecha, branch_id, employee_id)
 );
 
-CREATE INDEX IF NOT EXISTS idx_sync_descuentos_fecha ON sync_descuentos(fecha DESC);
-
-CREATE INDEX IF NOT EXISTS idx_sync_descuentos_employee ON sync_descuentos(employee_id);
-
--- ═══════════════════════════════════════════════════════════════════════════
--- INITIAL DATA
--- ═══════════════════════════════════════════════════════════════════════════
-
-INSERT INTO tower_users (user_id, name, email, role, permissions, notification_prefs)
+INSERT INTO tower_users (user_id, name, role, permissions, notification_prefs)
 VALUES 
-  ('jorge', 'Jorge', NULL, 'owner', '{"all": true}', '{"severity_min": "LOW", "channels": ["whatsapp", "tower"], "brief_type": "full"}'),
-  ('andres', 'Andres', NULL, 'audit', '{"view_cases": true, "approve_actions": true, "view_hr": true}', '{"severity_min": "HIGH", "channels": ["tower"], "brief_type": "audit"}'),
-  ('tany', 'Tany', NULL, 'ops', '{"view_cases": true, "approve_actions": true, "view_hr": false}', '{"severity_min": "MEDIUM", "channels": ["tower", "whatsapp"], "brief_type": "ops"}')
+  ('jorge', 'Jorge', 'owner', '{"all": true}', '{"severity_min": "LOW", "channels": ["whatsapp", "tower"], "brief_type": "full"}'),
+  ('andres', 'Andres', 'audit', '{"view_cases": true, "approve_actions": true, "view_hr": true}', '{"severity_min": "HIGH", "channels": ["tower"], "brief_type": "audit"}'),
+  ('tany', 'Tany', 'ops', '{"view_cases": true, "approve_actions": true, "view_hr": false}', '{"severity_min": "MEDIUM", "channels": ["tower", "whatsapp"], "brief_type": "ops"}')
 ON CONFLICT (user_id) DO NOTHING;
 
 INSERT INTO luca_playbooks (playbook_id, name, description, trigger_type, trigger_config, action_type, action_config)
 VALUES 
-  ('PB-FRAUD-001', 'Detector de Sweethearting', 'Detecta descuentos anomalos por empleado', 'METRIC_THRESHOLD', '{"metric": "discount_pct_employee", "operator": ">", "threshold": 25, "window": "1d"}', 'CREATE_CASE', '{"case_type": "FRAUD", "severity": "HIGH"}'),
-  ('PB-SALES-001', 'Caida de Ventas Diaria', 'Alerta cuando ventas caen mas del 15% vs baseline', 'METRIC_THRESHOLD', '{"metric": "sales_vs_baseline_pct", "operator": "<", "threshold": -15, "window": "1d"}', 'CREATE_ALERT', '{"alert_type": "SALES_DROP", "severity": "MEDIUM"}'),
-  ('PB-SALES-002', 'Caida Critica de Ventas', 'Escalacion cuando ventas caen mas del 25%', 'METRIC_THRESHOLD', '{"metric": "sales_vs_baseline_pct", "operator": "<", "threshold": -25, "window": "1d"}', 'CREATE_CASE', '{"case_type": "SALES_ANOMALY", "severity": "CRITICAL"}')
+  ('PB-FRAUD-001', 'Detector de Sweethearting', 'Detecta descuentos anomalos', 'METRIC_THRESHOLD', '{"metric": "discount_pct_employee", "operator": ">", "threshold": 25}', 'CREATE_CASE', '{"case_type": "FRAUD", "severity": "HIGH"}'),
+  ('PB-SALES-001', 'Caida de Ventas Diaria', 'Alerta cuando ventas caen 15%', 'METRIC_THRESHOLD', '{"metric": "sales_vs_baseline_pct", "operator": "<", "threshold": -15}', 'CREATE_ALERT', '{"alert_type": "SALES_DROP", "severity": "MEDIUM"}'),
+  ('PB-SALES-002', 'Caida Critica de Ventas', 'Ventas caen 25%', 'METRIC_THRESHOLD', '{"metric": "sales_vs_baseline_pct", "operator": "<", "threshold": -25}', 'CREATE_CASE', '{"case_type": "SALES_ANOMALY", "severity": "CRITICAL"}')
 ON CONFLICT (playbook_id) DO NOTHING;
