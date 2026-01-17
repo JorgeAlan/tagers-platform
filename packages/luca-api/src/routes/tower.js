@@ -91,51 +91,55 @@ router.get("/dashboard", async (req, res) => {
 
 /**
  * GET /api/tower/feed
- * Get feed of decision cards
+ * Get personalized feed of decision cards for Tower PWA
  */
 router.get("/feed", async (req, res) => {
   try {
-    const { limit = 20 } = req.query;
+    const { user_id = "jorge", limit = 20 } = req.query;
     
-    // Get pending actions (decision cards)
+    // Get pending actions (action_required cards)
     const actionsResult = await query(`
       SELECT 
-        action_id as id,
-        'action' as type,
-        action_type as subtype,
-        title,
-        description,
-        case_id,
-        severity,
-        requires_approval,
-        expected_impact,
-        created_at
-      FROM luca_actions 
-      WHERE state = 'PENDING'
+        a.action_id,
+        a.action_type,
+        a.title,
+        a.description,
+        a.case_id,
+        a.severity,
+        a.requires_approval,
+        a.expected_impact,
+        a.created_at,
+        c.title as case_title,
+        c.scope
+      FROM luca_actions a
+      LEFT JOIN luca_cases c ON a.case_id = c.case_id
+      WHERE a.state = 'PENDING' AND a.requires_approval = true
       ORDER BY 
-        CASE severity 
+        CASE a.severity 
           WHEN 'CRITICAL' THEN 1 
           WHEN 'HIGH' THEN 2 
           WHEN 'MEDIUM' THEN 3 
           ELSE 4 
         END,
-        created_at DESC
+        a.created_at DESC
       LIMIT $1
     `, [parseInt(limit)]);
     
-    // Get active alerts
+    // Get active alerts (alert_active cards)
     const alertsResult = await query(`
       SELECT 
-        alert_id as id,
-        'alert' as type,
-        alert_type as subtype,
+        alert_id,
+        alert_type,
         title,
-        message as description,
+        message,
         branch_id,
         severity,
+        source,
+        detector_id,
         created_at
       FROM luca_alerts 
       WHERE state = 'ACTIVE'
+        AND (expires_at IS NULL OR expires_at > NOW())
       ORDER BY 
         CASE severity 
           WHEN 'CRITICAL' THEN 1 
@@ -147,27 +151,114 @@ router.get("/feed", async (req, res) => {
       LIMIT $1
     `, [parseInt(limit)]);
     
-    // Merge and sort by severity + time
-    const feed = [
-      ...actionsResult.rows,
-      ...alertsResult.rows,
-    ].sort((a, b) => {
-      const severityOrder = { CRITICAL: 1, HIGH: 2, MEDIUM: 3, LOW: 4 };
-      const aSev = severityOrder[a.severity] || 5;
-      const bSev = severityOrder[b.severity] || 5;
-      if (aSev !== bSev) return aSev - bSev;
+    // Get recent case updates (case_update cards)
+    const caseUpdatesResult = await query(`
+      SELECT 
+        c.case_id,
+        c.case_type,
+        c.title,
+        c.state,
+        c.severity,
+        c.scope,
+        c.updated_at,
+        (SELECT action FROM luca_audit_log 
+         WHERE target_type = 'case' AND target_id = c.case_id 
+         ORDER BY created_at DESC LIMIT 1) as last_action
+      FROM luca_cases c
+      WHERE c.updated_at > NOW() - INTERVAL '24 hours'
+        AND c.state != 'CLOSED'
+      ORDER BY c.updated_at DESC
+      LIMIT 5
+    `);
+    
+    // Transform to FeedCard format
+    const feed = [];
+    
+    // Action cards (highest priority)
+    for (const action of actionsResult.rows) {
+      feed.push({
+        id: `action-${action.action_id}`,
+        type: "action_required",
+        priority: getSeverityPriority(action.severity),
+        title: action.title,
+        subtitle: action.case_title || action.action_type,
+        body: action.description || "",
+        actions: {
+          primary: { label: "Aprobar", action: "approve" },
+          secondary: { label: "Rechazar", action: "reject" },
+        },
+        source: "LUCA",
+        branch_id: action.scope?.branch_id,
+        case_id: action.case_id,
+        action_id: action.action_id,
+        created_at: action.created_at,
+        metadata: {
+          severity: action.severity,
+          expected_impact: action.expected_impact,
+        },
+      });
+    }
+    
+    // Alert cards
+    for (const alert of alertsResult.rows) {
+      feed.push({
+        id: `alert-${alert.alert_id}`,
+        type: "alert_active",
+        priority: getSeverityPriority(alert.severity) + 10, // Lower than actions
+        title: alert.title,
+        subtitle: alert.alert_type,
+        body: alert.message || "",
+        source: alert.source || alert.detector_id || "LUCA",
+        branch_id: alert.branch_id,
+        alert_id: alert.alert_id,
+        created_at: alert.created_at,
+        metadata: {
+          severity: alert.severity,
+        },
+      });
+    }
+    
+    // Case update cards
+    for (const update of caseUpdatesResult.rows) {
+      feed.push({
+        id: `case-${update.case_id}-${Date.now()}`,
+        type: "case_update",
+        priority: 50, // Low priority
+        title: `Caso actualizado: ${update.title}`,
+        subtitle: `Estado: ${update.state}`,
+        body: update.last_action ? `Última acción: ${update.last_action}` : "",
+        source: "Sistema",
+        branch_id: update.scope?.branch_id,
+        case_id: update.case_id,
+        created_at: update.updated_at,
+        metadata: {
+          severity: update.severity,
+          state: update.state,
+        },
+      });
+    }
+    
+    // Sort by priority (lower is higher priority)
+    feed.sort((a, b) => {
+      if (a.priority !== b.priority) return a.priority - b.priority;
       return new Date(b.created_at) - new Date(a.created_at);
-    }).slice(0, parseInt(limit));
+    });
     
     res.json({
-      feed,
+      feed: feed.slice(0, parseInt(limit)),
       total: feed.length,
+      user_id,
     });
   } catch (err) {
     logger.error({ err: err?.message }, "Failed to get feed");
     res.status(500).json({ error: "Failed to get feed" });
   }
 });
+
+function getSeverityPriority(severity) {
+  const mapping = { CRITICAL: 1, HIGH: 2, MEDIUM: 3, LOW: 4 };
+  return mapping[severity] || 5;
+}
 
 // ═══════════════════════════════════════════════════════════════════════════
 // BRANCHES
@@ -280,6 +371,128 @@ router.get("/auth/me", async (req, res) => {
     status: "not_implemented",
     message: "Auth coming in Iteration 2",
   });
+});
+
+// ═══════════════════════════════════════════════════════════════════════════
+// USER PREFERENCES
+// ═══════════════════════════════════════════════════════════════════════════
+
+/**
+ * GET /api/tower/preferences
+ * Get user preferences
+ */
+router.get("/preferences", async (req, res) => {
+  try {
+    const { user_id = "jorge" } = req.query;
+    
+    const result = await query(`
+      SELECT user_id, name, role, notification_prefs, watchlists
+      FROM tower_users
+      WHERE user_id = $1
+    `, [user_id]);
+    
+    if (result.rowCount === 0) {
+      return res.json({
+        notification_prefs: {
+          severity_min: "MEDIUM",
+          channels: ["tower"],
+          quiet_hours: { start: 22, end: 7 },
+          sound_enabled: true,
+        },
+        watchlists: {
+          branches: [],
+          detectors: [],
+        },
+        theme: "system",
+      });
+    }
+    
+    const user = result.rows[0];
+    res.json({
+      ...user.notification_prefs,
+      watchlists: user.watchlists || { branches: [], detectors: [] },
+      theme: "system",
+    });
+  } catch (err) {
+    logger.error({ err: err?.message }, "Failed to get preferences");
+    res.status(500).json({ error: "Failed to get preferences" });
+  }
+});
+
+/**
+ * POST /api/tower/preferences
+ * Update user preferences
+ */
+router.post("/preferences", async (req, res) => {
+  try {
+    const { user_id = "jorge" } = req.query;
+    const { notification_prefs, watchlists } = req.body;
+    
+    await query(`
+      INSERT INTO tower_users (user_id, name, notification_prefs, watchlists)
+      VALUES ($1, $1, $2, $3)
+      ON CONFLICT (user_id) DO UPDATE SET
+        notification_prefs = $2,
+        watchlists = $3,
+        updated_at = NOW()
+    `, [user_id, notification_prefs, watchlists]);
+    
+    res.json({ success: true });
+  } catch (err) {
+    logger.error({ err: err?.message }, "Failed to save preferences");
+    res.status(500).json({ error: "Failed to save preferences" });
+  }
+});
+
+// ═══════════════════════════════════════════════════════════════════════════
+// PUSH NOTIFICATIONS
+// ═══════════════════════════════════════════════════════════════════════════
+
+/**
+ * POST /api/tower/push-subscribe
+ * Subscribe to push notifications
+ */
+router.post("/push-subscribe", async (req, res) => {
+  try {
+    const { user_id = "jorge" } = req.query;
+    const subscription = req.body;
+    
+    // Store push subscription
+    await query(`
+      UPDATE tower_users SET
+        push_subscription = $2,
+        updated_at = NOW()
+      WHERE user_id = $1
+    `, [user_id, subscription]);
+    
+    logger.info({ user_id }, "Push subscription saved");
+    res.json({ success: true });
+  } catch (err) {
+    logger.error({ err: err?.message }, "Failed to save push subscription");
+    res.status(500).json({ error: "Failed to save push subscription" });
+  }
+});
+
+/**
+ * POST /api/tower/push-unsubscribe
+ * Unsubscribe from push notifications
+ */
+router.post("/push-unsubscribe", async (req, res) => {
+  try {
+    const { user_id = "jorge" } = req.query;
+    
+    await query(`
+      UPDATE tower_users SET
+        push_subscription = NULL,
+        updated_at = NOW()
+      WHERE user_id = $1
+    `, [user_id]);
+    
+    res.json({ success: true });
+  } catch (err) {
+    logger.error({ err: err?.message }, "Failed to remove push subscription");
+    res.status(500).json({ error: "Failed to remove push subscription" });
+  }
 });
 
 export default router;

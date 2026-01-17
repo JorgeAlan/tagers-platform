@@ -1,0 +1,140 @@
+{
+  "description": "Perfiles de sucursales Tagers - Conocimiento institucional",
+  "last_updated": "2026-01-17",
+  "note": "Este archivo contiene defaults. La configuración real debe venir de Google Sheets.",
+  
+  "branches": {
+    "SUC01": {
+      "name": "San Ángel",
+      "zone": "Sur",
+      "description": "Sucursal tradicional en zona residencial de alto poder adquisitivo",
+      "customer_profile": "Familias de nivel socioeconómico alto, profesionistas, turistas locales",
+      "peak_hours": ["08:00-10:00", "13:00-15:00", "17:00-19:00"],
+      "star_products": ["pastel", "cafe_especialidad", "pan_artesanal"],
+      "daily_goal": 80000,
+      "typical_staff": {
+        "weekday": 5,
+        "weekend": 7
+      },
+      "special_considerations": [
+        "Zona turística los fines de semana",
+        "Mercado del Sábado aumenta tráfico",
+        "Competencia fuerte con cafeterías artesanales"
+      ],
+      "seasonality_notes": "Diciembre muy fuerte por zona residencial. Julio-agosto baja por vacaciones."
+    },
+    "SUC02": {
+      "name": "Coyoacán",
+      "zone": "Sur",
+      "description": "Sucursal en zona bohemia con alto tráfico peatonal",
+      "customer_profile": "Estudiantes, turistas, familias jóvenes, artistas",
+      "peak_hours": ["10:00-14:00", "16:00-20:00"],
+      "star_products": ["cafe", "pan_dulce", "pastel_individual"],
+      "daily_goal": 70000,
+      "typical_staff": {
+        "weekday": 4,
+        "weekend": 6
+      },
+      "special_considerations": [
+        "Zona muy turística, especialmente fines de semana",
+        "Mercado de artesanías genera tráfico",
+        "Eventos culturales frecuentes en la zona"
+      ],
+      "seasonality_notes": "Fuerte los fines de semana todo el año. Día de Muertos es excepcional por cercanía a panteón."
+    },
+    "SUC03": {
+      "name": "Condesa",
+      "zone": "Centro",
+      "description": "Sucursal en zona de oficinas y restaurantes trendy",
+      "customer_profile": "Profesionistas jóvenes, ejecutivos, extranjeros residentes",
+      "peak_hours": ["07:30-09:30", "13:00-15:00", "18:00-20:00"],
+      "star_products": ["cafe_especialidad", "pan_artesanal", "brunch_items"],
+      "daily_goal": 90000,
+      "typical_staff": {
+        "weekday": 6,
+        "weekend": 5
+      },
+      "special_considerations": [
+        "Entre semana muy fuerte, fin de semana más tranquilo",
+        "Sensible a lluvias por tráfico peatonal",
+        "Competencia intensa con cafeterías de especialidad"
+      ],
+      "seasonality_notes": "Puentes y vacaciones bajan significativamente por ausencia de oficinistas."
+    },
+    "SUC04": {
+      "name": "Polanco",
+      "zone": "Poniente",
+      "description": "Sucursal premium en zona de alto poder adquisitivo",
+      "customer_profile": "Ejecutivos de alto nivel, residentes affluentes, turistas de negocios",
+      "peak_hours": ["08:00-10:00", "13:00-15:00", "17:00-19:00"],
+      "star_products": ["pastel_premium", "cafe_importacion", "canasta_regalo"],
+      "daily_goal": 100000,
+      "typical_staff": {
+        "weekday": 6,
+        "weekend": 6
+      },
+      "special_considerations": [
+        "Clientes dispuestos a pagar premium",
+        "Pedidos corporativos frecuentes",
+        "Expectativa de servicio muy alta"
+      ],
+      "seasonality_notes": "Diciembre excepcional por regalos corporativos. Semana Santa y agosto bajan mucho."
+    },
+    "SUC05": {
+      "name": "Roma",
+      "zone": "Centro",
+      "description": "Sucursal en zona hipster con mezcla residencial y comercial",
+      "customer_profile": "Millennials, creativos, residentes jóvenes, turistas",
+      "peak_hours": ["09:00-12:00", "14:00-17:00", "18:00-21:00"],
+      "star_products": ["cafe_especialidad", "pan_dulce", "productos_veganos"],
+      "daily_goal": 60000,
+      "typical_staff": {
+        "weekday": 4,
+        "weekend": 5
+      },
+      "special_considerations": [
+        "Demanda de opciones veganas y orgánicas",
+        "Eventos culturales frecuentes",
+        "Competencia muy alta en la zona"
+      ],
+      "seasonality_notes": "Relativamente estable todo el año. Eventos en parques cercanos generan picos."
+    },
+    "SUC06": {
+      "name": "Juárez",
+      "zone": "Centro",
+      "description": "Sucursal en zona de oficinas cerca de Reforma",
+      "customer_profile": "Oficinistas, ejecutivos, turistas de negocios",
+      "peak_hours": ["07:00-09:00", "12:00-14:00"],
+      "star_products": ["cafe_rapido", "pan_dulce", "sandwich"],
+      "daily_goal": 50000,
+      "typical_staff": {
+        "weekday": 4,
+        "weekend": 3
+      },
+      "special_considerations": [
+        "Muy dependiente de tráfico de oficinas",
+        "Sábados muy bajos, domingos mínimos",
+        "Sensible a manifestaciones en Reforma"
+      ],
+      "seasonality_notes": "Diciembre baja por vacaciones de oficinas. Puentes afectan significativamente."
+    }
+  },
+  
+  "zone_characteristics": {
+    "Sur": {
+      "description": "Zonas residenciales y turísticas del sur de la ciudad",
+      "general_pattern": "Fuertes fines de semana, estables entre semana",
+      "weather_sensitivity": "Moderada"
+    },
+    "Centro": {
+      "description": "Zonas con mezcla de oficinas, comercio y residencial",
+      "general_pattern": "Fuertes entre semana, variables fines de semana",
+      "weather_sensitivity": "Alta (tráfico peatonal)"
+    },
+    "Poniente": {
+      "description": "Zonas de alto poder adquisitivo",
+      "general_pattern": "Estables, sensibles a vacaciones",
+      "weather_sensitivity": "Baja (clientes en auto)"
+    }
+  }
+}

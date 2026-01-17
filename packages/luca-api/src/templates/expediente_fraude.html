@@ -1,0 +1,542 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Expediente de Fraude - {{case_id}}</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      font-size: 12px;
+      line-height: 1.5;
+      color: #333;
+      background: #fff;
+    }
+    
+    .page {
+      width: 210mm;
+      min-height: 297mm;
+      padding: 20mm;
+      margin: 0 auto;
+      background: white;
+    }
+    
+    .page-break {
+      page-break-before: always;
+    }
+    
+    /* Cover Page */
+    .cover {
+      text-align: center;
+      padding-top: 80mm;
+    }
+    
+    .cover-logo {
+      font-size: 48px;
+      margin-bottom: 20mm;
+    }
+    
+    .cover h1 {
+      font-size: 24px;
+      color: #b91c1c;
+      margin-bottom: 5mm;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+    }
+    
+    .cover h2 {
+      font-size: 16px;
+      color: #666;
+      margin-bottom: 15mm;
+    }
+    
+    .cover-meta {
+      margin-top: 30mm;
+      font-size: 11px;
+      color: #666;
+    }
+    
+    .cover-meta p {
+      margin: 2mm 0;
+    }
+    
+    .severity-badge {
+      display: inline-block;
+      padding: 2mm 5mm;
+      border-radius: 3mm;
+      font-weight: bold;
+      text-transform: uppercase;
+      font-size: 10px;
+    }
+    
+    .severity-CRITICAL { background: #fecaca; color: #b91c1c; }
+    .severity-HIGH { background: #fed7aa; color: #c2410c; }
+    .severity-MEDIUM { background: #fef08a; color: #a16207; }
+    .severity-LOW { background: #d1fae5; color: #047857; }
+    
+    /* Headers */
+    .section-header {
+      background: #1e293b;
+      color: white;
+      padding: 3mm 5mm;
+      margin: 8mm 0 5mm 0;
+      font-size: 14px;
+      font-weight: bold;
+    }
+    
+    .subsection-header {
+      background: #f1f5f9;
+      padding: 2mm 5mm;
+      margin: 5mm 0 3mm 0;
+      font-size: 12px;
+      font-weight: bold;
+      border-left: 3px solid #3b82f6;
+    }
+    
+    /* Content */
+    .content {
+      padding: 0 3mm;
+    }
+    
+    .summary-box {
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      border-radius: 2mm;
+      padding: 5mm;
+      margin: 5mm 0;
+    }
+    
+    .summary-box h3 {
+      font-size: 13px;
+      margin-bottom: 3mm;
+      color: #1e293b;
+    }
+    
+    .key-findings {
+      list-style: none;
+    }
+    
+    .key-findings li {
+      padding: 2mm 0;
+      padding-left: 5mm;
+      position: relative;
+    }
+    
+    .key-findings li::before {
+      content: "•";
+      position: absolute;
+      left: 0;
+      color: #3b82f6;
+      font-weight: bold;
+    }
+    
+    /* Tables */
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 5mm 0;
+      font-size: 10px;
+    }
+    
+    th, td {
+      border: 1px solid #e2e8f0;
+      padding: 2mm 3mm;
+      text-align: left;
+    }
+    
+    th {
+      background: #f1f5f9;
+      font-weight: bold;
+    }
+    
+    tr:nth-child(even) {
+      background: #f8fafc;
+    }
+    
+    /* Timeline */
+    .timeline {
+      position: relative;
+      padding-left: 15mm;
+    }
+    
+    .timeline::before {
+      content: "";
+      position: absolute;
+      left: 5mm;
+      top: 0;
+      bottom: 0;
+      width: 2px;
+      background: #e2e8f0;
+    }
+    
+    .timeline-item {
+      position: relative;
+      padding: 3mm 0;
+    }
+    
+    .timeline-item::before {
+      content: "";
+      position: absolute;
+      left: -12mm;
+      top: 4mm;
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #3b82f6;
+    }
+    
+    .timeline-date {
+      font-size: 9px;
+      color: #666;
+    }
+    
+    .timeline-action {
+      font-weight: bold;
+    }
+    
+    /* Signatures */
+    .signatures {
+      margin-top: 15mm;
+      display: flex;
+      justify-content: space-between;
+    }
+    
+    .signature-box {
+      width: 45%;
+      text-align: center;
+    }
+    
+    .signature-line {
+      border-top: 1px solid #333;
+      margin-top: 15mm;
+      padding-top: 2mm;
+    }
+    
+    /* Risk Indicator */
+    .risk-indicator {
+      display: flex;
+      align-items: center;
+      margin: 5mm 0;
+    }
+    
+    .risk-bar {
+      flex: 1;
+      height: 8mm;
+      background: #e2e8f0;
+      border-radius: 4mm;
+      overflow: hidden;
+    }
+    
+    .risk-fill {
+      height: 100%;
+      background: linear-gradient(90deg, #22c55e 0%, #eab308 50%, #ef4444 100%);
+    }
+    
+    .risk-score {
+      margin-left: 5mm;
+      font-size: 18px;
+      font-weight: bold;
+    }
+    
+    /* Hypothesis */
+    .hypothesis {
+      border: 1px solid #e2e8f0;
+      border-radius: 2mm;
+      padding: 4mm;
+      margin: 3mm 0;
+    }
+    
+    .hypothesis-rank {
+      display: inline-block;
+      width: 6mm;
+      height: 6mm;
+      background: #3b82f6;
+      color: white;
+      border-radius: 50%;
+      text-align: center;
+      line-height: 6mm;
+      font-size: 10px;
+      margin-right: 3mm;
+    }
+    
+    .hypothesis-title {
+      font-weight: bold;
+      display: inline;
+    }
+    
+    .hypothesis-confidence {
+      float: right;
+      color: #666;
+      font-size: 10px;
+    }
+    
+    .hypothesis-description {
+      margin-top: 2mm;
+      color: #666;
+      padding-left: 9mm;
+    }
+    
+    /* Footer */
+    .footer {
+      position: fixed;
+      bottom: 10mm;
+      left: 20mm;
+      right: 20mm;
+      font-size: 9px;
+      color: #666;
+      border-top: 1px solid #e2e8f0;
+      padding-top: 3mm;
+      display: flex;
+      justify-content: space-between;
+    }
+    
+    /* Confidential watermark */
+    .watermark {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%) rotate(-45deg);
+      font-size: 80px;
+      color: rgba(0, 0, 0, 0.03);
+      white-space: nowrap;
+      pointer-events: none;
+    }
+    
+    @media print {
+      .page {
+        margin: 0;
+        padding: 15mm;
+      }
+      
+      .page-break {
+        page-break-before: always;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="watermark">CONFIDENCIAL</div>
+  
+  <!-- COVER PAGE -->
+  <div class="page cover">
+    <div class="cover-logo">⚖️</div>
+    <h1>Expediente de Fraude</h1>
+    <h2>{{cover.subtitle}}</h2>
+    
+    <div>
+      <span class="severity-badge severity-{{cover.severity}}">
+        Severidad: {{cover.severity}}
+      </span>
+    </div>
+    
+    <div class="cover-meta">
+      <p><strong>No. de Caso:</strong> {{cover.case_id}}</p>
+      <p><strong>Estado:</strong> {{cover.status}}</p>
+      <p><strong>Fecha de creación:</strong> {{cover.created_at}}</p>
+      <p><strong>Generado:</strong> {{metadata.generated_at}}</p>
+    </div>
+  </div>
+  
+  <!-- EXECUTIVE SUMMARY -->
+  <div class="page page-break">
+    <div class="section-header">1. RESUMEN EJECUTIVO</div>
+    
+    <div class="content">
+      <div class="summary-box">
+        <h3>Conclusión Principal</h3>
+        <p>{{executive_summary.conclusion}}</p>
+      </div>
+      
+      <div class="risk-indicator">
+        <span style="margin-right: 3mm;">Nivel de Riesgo:</span>
+        <div class="risk-bar">
+          <div class="risk-fill" style="width: {{risk_score}}%;"></div>
+        </div>
+        <span class="risk-score">{{risk_score}}</span>
+      </div>
+      
+      <table>
+        <tr>
+          <th>Campo</th>
+          <th>Valor</th>
+        </tr>
+        <tr>
+          <td>Empleado</td>
+          <td>{{executive_summary.employee_id}}</td>
+        </tr>
+        <tr>
+          <td>Sucursal</td>
+          <td>{{executive_summary.branch_id}}</td>
+        </tr>
+        <tr>
+          <td>Severidad</td>
+          <td><span class="severity-badge severity-{{executive_summary.severity}}">{{executive_summary.severity}}</span></td>
+        </tr>
+        <tr>
+          <td>Nivel de Riesgo</td>
+          <td>{{executive_summary.risk_level}}</td>
+        </tr>
+      </table>
+    </div>
+    
+    <div class="section-header">2. HIPÓTESIS</div>
+    
+    <div class="content">
+      {{#each hypotheses}}
+      <div class="hypothesis">
+        <span class="hypothesis-rank">{{rank}}</span>
+        <span class="hypothesis-title">{{hypothesis}}</span>
+        <span class="hypothesis-confidence">Confianza: {{confidence}}%</span>
+        <p class="hypothesis-description">{{description}}</p>
+      </div>
+      {{/each}}
+    </div>
+  </div>
+  
+  <!-- EVIDENCE -->
+  <div class="page page-break">
+    <div class="section-header">3. EVIDENCIA</div>
+    
+    <div class="subsection-header">3.1 Transacciones Sospechosas</div>
+    
+    <div class="content">
+      <p>Se identificaron {{evidence.transactions.count}} transacciones sospechosas con un total de descuentos de ${{evidence.transactions.total_discount}} MXN.</p>
+      
+      <table>
+        <tr>
+          <th>ID</th>
+          <th>Fecha</th>
+          <th>Total</th>
+          <th>Descuento</th>
+          <th>Razón</th>
+          <th>Patrón</th>
+        </tr>
+        {{#each evidence.transactions.list}}
+        <tr>
+          <td>{{transaction_id}}</td>
+          <td>{{date}}</td>
+          <td>${{total}}</td>
+          <td>${{discount}}</td>
+          <td>{{discount_reason}}</td>
+          <td>{{flagged_for}}</td>
+        </tr>
+        {{/each}}
+      </table>
+    </div>
+    
+    <div class="subsection-header">3.2 Patrones Detectados</div>
+    
+    <div class="content">
+      <table>
+        <tr>
+          <th>Patrón</th>
+          <th>Severidad</th>
+          <th>Descripción</th>
+        </tr>
+        {{#each evidence.patterns}}
+        <tr>
+          <td>{{type}}</td>
+          <td>{{severity}}</td>
+          <td>{{description}}</td>
+        </tr>
+        {{/each}}
+      </table>
+    </div>
+  </div>
+  
+  <!-- RECOMMENDED ACTIONS -->
+  <div class="page page-break">
+    <div class="section-header">4. ACCIONES RECOMENDADAS</div>
+    
+    <div class="content">
+      <table>
+        <tr>
+          <th>Acción</th>
+          <th>Descripción</th>
+          <th>Estado</th>
+          <th>Aprobación</th>
+        </tr>
+        {{#each recommended_actions}}
+        <tr>
+          <td>{{title}}</td>
+          <td>{{description}}</td>
+          <td>{{status}}</td>
+          <td>{{#if requires_approval}}Requerida{{else}}Automática{{/if}}</td>
+        </tr>
+        {{/each}}
+      </table>
+    </div>
+    
+    <div class="section-header">5. TIMELINE</div>
+    
+    <div class="content">
+      <div class="timeline">
+        {{#each timeline}}
+        <div class="timeline-item">
+          <span class="timeline-date">{{date}}</span>
+          <span class="timeline-action">{{action}}</span>
+          <span style="color: #666;"> - {{actor}}</span>
+        </div>
+        {{/each}}
+      </div>
+    </div>
+  </div>
+  
+  <!-- SIGNATURES -->
+  <div class="page page-break">
+    <div class="section-header">6. FIRMAS Y APROBACIONES</div>
+    
+    <div class="content">
+      <div class="signatures">
+        <div class="signature-box">
+          <div class="signature-line">
+            <p><strong>Investigador</strong></p>
+            <p>{{signatures.investigator.name}}</p>
+            <p style="font-size: 9px;">{{signatures.investigator.date}}</p>
+          </div>
+        </div>
+        
+        <div class="signature-box">
+          <div class="signature-line">
+            <p><strong>Revisor</strong></p>
+            <p>{{signatures.reviewer.name}}</p>
+            <p style="font-size: 9px;">{{signatures.reviewer.date}}</p>
+          </div>
+        </div>
+      </div>
+      
+      <div class="signatures" style="margin-top: 20mm;">
+        <div class="signature-box">
+          <div class="signature-line">
+            <p><strong>Aprobador Final</strong></p>
+            <p>{{signatures.approver.name}}</p>
+            <p style="font-size: 9px;">{{signatures.approver.date}}</p>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <div class="summary-box" style="margin-top: 20mm;">
+      <h3>Nota de Confidencialidad</h3>
+      <p style="font-size: 10px;">
+        Este documento contiene información confidencial y privilegiada destinada únicamente 
+        para el uso de las personas autorizadas. La divulgación, copia, distribución o uso 
+        de este documento sin autorización está estrictamente prohibida. Si usted no es el 
+        destinatario previsto, notifique inmediatamente y destruya este documento.
+      </p>
+    </div>
+  </div>
+  
+  <div class="footer">
+    <span>LUCA Control Tower - La Fiscalía</span>
+    <span>Caso: {{cover.case_id}}</span>
+    <span>CONFIDENCIAL</span>
+  </div>
+</body>
+</html>

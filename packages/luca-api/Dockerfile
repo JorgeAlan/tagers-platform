@@ -1,39 +1,21 @@
-# ═══════════════════════════════════════════════════════════════════════════
-# LUCA API - Dockerfile para Monorepo
-# ═══════════════════════════════════════════════════════════════════════════
-# 
-# Este Dockerfile se ejecuta desde la raíz del monorepo.
-# Railway configura Root Directory: packages/luca-api
-# Pero el build context es la raíz del repo.
-#
-# ═══════════════════════════════════════════════════════════════════════════
-
 FROM node:20-alpine
-
-# Instalar pnpm
-RUN npm install -g pnpm
 
 WORKDIR /app
 
-# Copiar archivos de workspace root
-COPY package.json pnpm-workspace.yaml ./
-COPY pnpm-lock.yaml* ./
+# Copiar archivos de dependencias
+COPY package.json pnpm-lock.yaml* ./
+COPY packages/shared/package.json ./packages/shared/
+COPY packages/luca-api/package.json ./packages/luca-api/
 
-# Copiar packages necesarios
+# Instalar pnpm y dependencias
+RUN npm install -g pnpm && pnpm install --frozen-lockfile
+
+# Copiar código fuente
 COPY packages/shared ./packages/shared
 COPY packages/luca-api ./packages/luca-api
 
-# Instalar dependencias
-RUN pnpm install --frozen-lockfile 2>/dev/null || pnpm install
-
-# Ir al directorio del servicio
 WORKDIR /app/packages/luca-api
 
-# Puerto de LUCA
-EXPOSE 3001
-
-# Health check
-HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
-  CMD wget --no-verbose --tries=1 --spider http://localhost:3001/health || exit 1
+EXPOSE 3002
 
 CMD ["node", "src/server.js"]

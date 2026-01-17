@@ -1,0 +1,107 @@
+{
+  "_comment": "LUCA Default Configuration - Use Google Sheets for production",
+  "_sheet_id_env": "LUCA_CONFIG_SHEET_ID",
+  
+  "branches": {
+    "_instructions": "Configure in LUCA_BRANCHES sheet",
+    "_columns": ["branch_id", "name", "city", "type", "lat", "lon", "timezone", "open_hour", "close_hour", "peak_hours", "daily_sales_baseline", "avg_ticket", "daily_transactions", "peak_factor", "tables", "seats", "max_occupancy", "kitchen_stations", "bakery_stations", "cash_registers", "school_zone_density", "delivery_baseline_ratio"]
+  },
+
+  "staffing": {
+    "_instructions": "Configure in LUCA_STAFFING sheet",
+    "_columns": ["branch_id", "shift", "baristas", "kitchen", "floor", "cashier"]
+  },
+
+  "thresholds": {
+    "_instructions": "Configure in LUCA_THRESHOLDS sheet",
+    "_columns": ["detector_id", "metric", "threshold", "severity", "enabled", "description", "direction"],
+    "_example_detectors": ["fraud_fiscal", "forense", "churn", "staffing", "inventory", "sentiment"]
+  },
+
+  "weather_impact": {
+    "_instructions": "Configure in LUCA_WEATHER_IMPACT sheet",
+    "_columns": ["condition", "dine_in", "delivery", "takeaway", "beverages_cold", "beverages_hot", "bakery", "overall"],
+    "_conditions": ["clear", "partly_cloudy", "cloudy", "light_rain", "rain", "heavy_rain", "drizzle", "thunderstorm", "mist", "fog", "extreme_heat", "cold", "perfect"]
+  },
+
+  "holidays": {
+    "_instructions": "Configure in LUCA_HOLIDAYS sheet",
+    "_columns": ["date_key", "name", "type", "sales_impact", "is_closed", "notes", "affected_categories"],
+    "_date_key_format": "MM-DD",
+    "_types": ["national", "commercial", "cultural"]
+  },
+
+  "seasons": {
+    "_instructions": "Configure in LUCA_SEASONS sheet",
+    "_columns": ["season_id", "name", "start_date", "end_date", "sales_impact", "affected_products"],
+    "_example_seasons": ["rosca_season", "pan_de_muerto", "navidad", "semana_santa", "verano"]
+  },
+
+  "fraud_patterns": {
+    "_instructions": "Configure in LUCA_FRAUD_PATTERNS sheet",
+    "_columns": ["pattern_id", "name", "enabled", "min_score", "weight_time", "weight_discount", "weight_employee", "weight_sequence", "weight_amount", "weight_frequency"],
+    "_patterns": ["sweethearting", "collusion", "time_concentration", "cash_preference", "void_abuse", "refund_abuse", "price_anomaly", "sequence_anomaly"]
+  },
+
+  "roi_values": {
+    "_instructions": "Configure in LUCA_ROI_VALUES sheet",
+    "_columns": ["key", "value", "unit", "description"],
+    "_keys": [
+      "hourly_employee_cost",
+      "customer_lifetime_value", 
+      "employee_turnover_cost",
+      "avg_margin",
+      "openai_monthly_cost",
+      "infrastructure_monthly_cost",
+      "maintenance_monthly_cost",
+      "fraud_recovery_rate",
+      "churn_prevention_rate"
+    ]
+  },
+
+  "capacity": {
+    "_instructions": "Configure in LUCA_CAPACITY sheet",
+    "_columns": ["role", "drinks_per_hour", "dishes_per_hour", "bakery_per_hour", "customers_per_hour", "transactions_per_hour", "cost_per_hour"],
+    "_roles": ["barista", "kitchen", "floor", "cashier", "manager"]
+  },
+
+  "seasonality": {
+    "_instructions": "Configure in LUCA_SEASONALITY sheet",
+    "_columns": ["period_type", "period_value", "factor", "description"],
+    "_period_types": {
+      "day_of_week": "0=Sunday, 1=Monday, ..., 6=Saturday",
+      "month": "1-12",
+      "hour": "0-23"
+    }
+  },
+
+  "autonomy": {
+    "_instructions": "Configure in LUCA_AUTONOMY sheet",
+    "_columns": ["level", "name", "description", "requires_approval", "max_amount_mxn", "allowed_actions"],
+    "_levels": {
+      "0": "Manual - Solo reporta",
+      "1": "Sugiere - Propone acciones",
+      "2": "Prepara - Draft listo para aprobar",
+      "3": "Confirma - Ejecuta con confirmación",
+      "4": "Autónomo - Ejecuta automáticamente",
+      "5": "Proactivo - Anticipa y actúa"
+    }
+  },
+
+  "city_adjustments": {
+    "_instructions": "Configure in LUCA_CITY_ADJUSTMENTS sheet",
+    "_columns": ["city", "rain_sensitivity", "heat_sensitivity", "traffic_factor", "delivery_baseline_ratio"]
+  },
+
+  "venues": {
+    "_instructions": "Configure in LUCA_VENUES sheet for event tracking",
+    "_columns": ["venue_id", "name", "city", "lat", "lon", "capacity", "type"],
+    "_types": ["stadium", "arena", "convention", "outdoor", "theater"]
+  },
+
+  "school_calendar": {
+    "_instructions": "Configure in LUCA_SCHOOL_CALENDAR sheet",
+    "_columns": ["period_id", "name", "start_date", "end_date", "type", "traffic_impact"],
+    "_types": ["vacation", "school_year", "enrollment"]
+  }
+}

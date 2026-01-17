@@ -1,0 +1,166 @@
+{
+  "description": "Patrones de estacionalidad de Tagers - Conocimiento institucional",
+  "last_updated": "2026-01-17",
+  
+  "monthly": {
+    "01": {
+      "name": "Enero",
+      "expected_impact": -0.10,
+      "description": "Mes de ajuste post-navideño. Ventas típicamente 10% menores excepto semana de Reyes.",
+      "impact_description": "Enero es históricamente más bajo excepto los primeros 6 días por temporada de rosca.",
+      "key_products": ["rosca_reyes", "cafe", "pan_dulce"],
+      "special_dates": [
+        { "date": "01-06", "event": "Día de Reyes", "impact": 0.50 }
+      ]
+    },
+    "02": {
+      "name": "Febrero",
+      "expected_impact": 0.05,
+      "description": "Mes con pico por San Valentín. Productos románticos y pasteles especiales.",
+      "impact_description": "San Valentín genera incremento notable en pasteles y cafetería.",
+      "key_products": ["pastel_especial", "cafe", "pan_dulce"],
+      "special_dates": [
+        { "date": "02-14", "event": "San Valentín", "impact": 0.40 }
+      ]
+    },
+    "03": {
+      "name": "Marzo",
+      "expected_impact": 0.00,
+      "description": "Mes estable. Posible impacto por Semana Santa si cae en marzo.",
+      "impact_description": "Marzo es típicamente estable sin grandes variaciones.",
+      "key_products": ["pan_dulce", "cafe", "pastel"]
+    },
+    "04": {
+      "name": "Abril",
+      "expected_impact": -0.05,
+      "description": "Semana Santa puede causar baja en algunas sucursales por vacaciones.",
+      "impact_description": "Semana Santa impacta especialmente en zonas residenciales.",
+      "key_products": ["pan_dulce", "cafe"],
+      "notes": "Verificar fechas de Semana Santa cada año"
+    },
+    "05": {
+      "name": "Mayo",
+      "expected_impact": 0.15,
+      "description": "Día de las Madres impulsa ventas de pasteles significativamente.",
+      "impact_description": "10 de Mayo es uno de los días más fuertes del año.",
+      "key_products": ["pastel", "cafe", "pan_dulce"],
+      "special_dates": [
+        { "date": "05-10", "event": "Día de las Madres", "impact": 0.80 }
+      ]
+    },
+    "06": {
+      "name": "Junio",
+      "expected_impact": 0.00,
+      "description": "Mes estable, inicio de lluvias puede afectar tráfico vespertino.",
+      "impact_description": "Las lluvias de temporada pueden reducir tráfico después de las 5pm.",
+      "key_products": ["cafe", "pan_dulce"]
+    },
+    "07": {
+      "name": "Julio",
+      "expected_impact": -0.05,
+      "description": "Vacaciones de verano afectan zonas residenciales y de oficinas.",
+      "impact_description": "Polanco y Roma ven menos tráfico por vacaciones.",
+      "key_products": ["cafe_frio", "pan_dulce"]
+    },
+    "08": {
+      "name": "Agosto",
+      "expected_impact": -0.05,
+      "description": "Continúan vacaciones, regreso a clases al final del mes.",
+      "impact_description": "Última semana mejora por regreso a clases.",
+      "key_products": ["cafe", "pan_dulce"]
+    },
+    "09": {
+      "name": "Septiembre",
+      "expected_impact": 0.10,
+      "description": "Fiestas patrias impulsan ventas, especialmente productos tradicionales.",
+      "impact_description": "Semana del 15 de septiembre tiene ventas elevadas.",
+      "key_products": ["pan_dulce", "pastel_patrio", "cafe"],
+      "special_dates": [
+        { "date": "09-15", "event": "Independencia", "impact": 0.30 },
+        { "date": "09-16", "event": "Día de la Independencia", "impact": 0.25 }
+      ]
+    },
+    "10": {
+      "name": "Octubre",
+      "expected_impact": 0.05,
+      "description": "Preparación para Día de Muertos impulsa pan de muerto.",
+      "impact_description": "Últimas dos semanas son fuertes por pan de muerto.",
+      "key_products": ["pan_de_muerto", "cafe", "pan_dulce"]
+    },
+    "11": {
+      "name": "Noviembre",
+      "expected_impact": 0.15,
+      "description": "Día de Muertos al inicio, Buen Fin y preparación navideña.",
+      "impact_description": "Mes fuerte por múltiples eventos.",
+      "key_products": ["pan_de_muerto", "pan_dulce", "cafe"],
+      "special_dates": [
+        { "date": "11-01", "event": "Día de Muertos", "impact": 0.35 },
+        { "date": "11-02", "event": "Día de Muertos", "impact": 0.30 }
+      ]
+    },
+    "12": {
+      "name": "Diciembre",
+      "expected_impact": 0.40,
+      "description": "Temporada navideña, mes más fuerte del año. Roscas, pasteles, canastas.",
+      "impact_description": "Diciembre es el mes más importante, especialmente últimas dos semanas.",
+      "key_products": ["rosca", "pastel_navidad", "canasta", "pan_dulce"],
+      "special_dates": [
+        { "date": "12-24", "event": "Nochebuena", "impact": 0.60 },
+        { "date": "12-25", "event": "Navidad", "impact": -0.30 },
+        { "date": "12-31", "event": "Fin de Año", "impact": 0.40 }
+      ]
+    }
+  },
+  
+  "weekly": {
+    "0": {
+      "name": "Domingo",
+      "expected_index": 0.85,
+      "description": "Día familiar, horario reducido en algunas sucursales.",
+      "peak_hours": ["10:00-13:00"],
+      "key_products": ["pastel", "pan_dulce", "cafe"]
+    },
+    "1": {
+      "name": "Lunes",
+      "expected_index": 0.90,
+      "description": "Inicio de semana, tráfico moderado.",
+      "peak_hours": ["08:00-10:00", "13:00-15:00"],
+      "key_products": ["cafe", "pan_dulce"]
+    },
+    "2": {
+      "name": "Martes",
+      "expected_index": 0.95,
+      "description": "Día estable.",
+      "peak_hours": ["08:00-10:00", "13:00-15:00"],
+      "key_products": ["cafe", "pan_dulce"]
+    },
+    "3": {
+      "name": "Miércoles",
+      "expected_index": 1.00,
+      "description": "Día promedio, referencia baseline.",
+      "peak_hours": ["08:00-10:00", "13:00-15:00"],
+      "key_products": ["cafe", "pan_dulce"]
+    },
+    "4": {
+      "name": "Jueves",
+      "expected_index": 1.05,
+      "description": "Día fuerte, preparación para fin de semana.",
+      "peak_hours": ["08:00-10:00", "13:00-15:00", "18:00-20:00"],
+      "key_products": ["cafe", "pan_dulce", "pastel"]
+    },
+    "5": {
+      "name": "Viernes",
+      "expected_index": 1.20,
+      "description": "Día muy fuerte, pedidos para fin de semana.",
+      "peak_hours": ["08:00-10:00", "13:00-15:00", "17:00-21:00"],
+      "key_products": ["pastel", "cafe", "pan_dulce"]
+    },
+    "6": {
+      "name": "Sábado",
+      "expected_index": 1.30,
+      "description": "Día más fuerte de la semana, alto tráfico familiar.",
+      "peak_hours": ["09:00-14:00", "17:00-20:00"],
+      "key_products": ["pastel", "pan_dulce", "cafe", "canasta"]
+    }
+  }
+}

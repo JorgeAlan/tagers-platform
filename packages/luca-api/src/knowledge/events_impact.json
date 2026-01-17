@@ -1,0 +1,162 @@
+{
+  "description": "Impacto histórico de eventos en ventas de Tagers",
+  "last_updated": "2026-01-17",
+  
+  "events": [
+    {
+      "id": "lluvia_fuerte",
+      "name": "Lluvia fuerte",
+      "type": "weather",
+      "description": "Lluvia intensa que dificulta el tráfico peatonal y vehicular",
+      "historical_impact": "Caída de 15-25% en tráfico, especialmente después de las 5pm",
+      "affected_branches": ["SUC03", "SUC05"],
+      "recommendations": [
+        "Ajustar producción de pan dulce a la baja",
+        "Promover delivery si está disponible",
+        "No programar promociones"
+      ],
+      "recovery_time": "Inmediato al mejorar clima"
+    },
+    {
+      "id": "manifestacion_centro",
+      "name": "Manifestación en zona centro",
+      "type": "social",
+      "description": "Marchas o manifestaciones que afectan acceso a sucursales",
+      "historical_impact": "Caída de 30-50% en sucursales afectadas",
+      "affected_branches": ["SUC06", "SUC03"],
+      "recommendations": [
+        "Reducir personal si se sabe con anticipación",
+        "Avisar a clientes frecuentes",
+        "Ajustar producción significativamente"
+      ],
+      "recovery_time": "1-2 días después del evento"
+    },
+    {
+      "id": "partido_mexico",
+      "name": "Partido de la Selección Mexicana",
+      "type": "sports",
+      "description": "Partidos importantes de la selección nacional",
+      "historical_impact": "Caída de 20% durante el partido, especialmente en horario vespertino",
+      "affected_branches": ["SUC01", "SUC02", "SUC04", "SUC05", "SUC06"],
+      "recommendations": [
+        "Reducir personal en horario del partido",
+        "Promover productos para llevar antes del partido"
+      ],
+      "recovery_time": "Inmediato al terminar"
+    },
+    {
+      "id": "puente_largo",
+      "name": "Puente/Fin de semana largo",
+      "type": "holiday",
+      "description": "Fines de semana largos donde mucha gente sale de la ciudad",
+      "historical_impact": "Caída de 25-35% en zonas residenciales (Polanco, Roma), incremento en zonas turísticas",
+      "affected_branches": ["SUC04", "SUC05"],
+      "recommendations": [
+        "Ajustar personal según ubicación",
+        "Reducir producción en zonas residenciales",
+        "Incrementar en zonas turísticas"
+      ],
+      "recovery_time": "Siguiente día hábil"
+    },
+    {
+      "id": "construccion_cercana",
+      "name": "Obra de construcción cercana",
+      "type": "infrastructure",
+      "description": "Obras que dificultan acceso o estacionamiento",
+      "historical_impact": "Caída gradual de 10-20% durante la obra",
+      "affected_branches": [],
+      "recommendations": [
+        "Comunicar rutas alternativas",
+        "Considerar promociones para mantener clientes",
+        "Potenciar delivery"
+      ],
+      "recovery_time": "Gradual al terminar obra"
+    },
+    {
+      "id": "corte_agua",
+      "name": "Corte de agua en la zona",
+      "type": "infrastructure",
+      "description": "Cortes de agua programados o emergentes",
+      "historical_impact": "Puede forzar cierre temporal",
+      "affected_branches": [],
+      "recommendations": [
+        "Preparar reservas de agua si se sabe con anticipación",
+        "Comunicar horarios de cierre",
+        "Avisar a clientes"
+      ],
+      "recovery_time": "Inmediato al restablecerse servicio"
+    },
+    {
+      "id": "apertura_competidor",
+      "name": "Apertura de competidor cercano",
+      "type": "competition",
+      "description": "Nueva tienda de la competencia en la zona",
+      "historical_impact": "Caída de 10-20% inicial, se estabiliza en 5-10% después de 3 meses",
+      "affected_branches": [],
+      "recommendations": [
+        "Reforzar servicio al cliente",
+        "Considerar promociones de retención",
+        "Monitorear productos donde compiten directamente"
+      ],
+      "recovery_time": "3-6 meses para estabilizar"
+    },
+    {
+      "id": "dia_madres",
+      "name": "Día de las Madres",
+      "type": "holiday",
+      "dates": ["05-10"],
+      "description": "Uno de los días más fuertes del año",
+      "historical_impact": "Incremento de 80-120% en pasteles, 40% general",
+      "affected_branches": ["SUC01", "SUC02", "SUC03", "SUC04", "SUC05", "SUC06"],
+      "recommendations": [
+        "Producción extra de pasteles (2-3x normal)",
+        "Personal adicional",
+        "Preparar pedidos con anticipación",
+        "Stock extra de insumos"
+      ]
+    },
+    {
+      "id": "reyes",
+      "name": "Temporada de Rosca de Reyes",
+      "type": "holiday",
+      "dates": ["01-01", "01-02", "01-03", "01-04", "01-05", "01-06"],
+      "description": "Temporada más importante para roscas",
+      "historical_impact": "Incremento de 50-100% en primera semana de enero por roscas",
+      "affected_branches": ["SUC01", "SUC02", "SUC03", "SUC04", "SUC05", "SUC06"],
+      "recommendations": [
+        "Producción máxima de roscas",
+        "Personal adicional",
+        "Pedidos anticipados obligatorios para roscas grandes",
+        "Stock extra de ingredientes desde diciembre"
+      ]
+    },
+    {
+      "id": "navidad",
+      "name": "Temporada Navideña",
+      "type": "holiday",
+      "dates": ["12-15", "12-16", "12-17", "12-18", "12-19", "12-20", "12-21", "12-22", "12-23", "12-24"],
+      "description": "Temporada más importante del año",
+      "historical_impact": "Incremento de 40-60% general, picos de 100%+ en días específicos",
+      "affected_branches": ["SUC01", "SUC02", "SUC03", "SUC04", "SUC05", "SUC06"],
+      "recommendations": [
+        "Producción máxima",
+        "Todo el personal disponible",
+        "Horarios extendidos",
+        "Pedidos anticipados para pasteles navideños"
+      ]
+    }
+  ],
+  
+  "external_data_sources": {
+    "weather": {
+      "api": "openweathermap",
+      "check_frequency": "hourly",
+      "alert_conditions": ["rain > 10mm", "temp < 5C", "temp > 35C"]
+    },
+    "traffic": {
+      "api": "google_maps",
+      "check_frequency": "hourly",
+      "alert_conditions": ["delay > 30min"]
+    }
+  }
+}
