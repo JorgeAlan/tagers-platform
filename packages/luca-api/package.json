@@ -13,6 +13,7 @@
     "@tagers/shared": "workspace:*",
     "cors": "^2.8.5",
     "express": "^4.18.2",
+    "googleapis": "^144.0.0",
     "google-spreadsheet": "^4.1.1",
     "google-auth-library": "^9.4.1",
     "node-cron": "^3.0.3",
