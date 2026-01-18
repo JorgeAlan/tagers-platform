@@ -11,7 +11,7 @@
  */
 
 import { logger } from "@tagers/shared";
-import { BaseDetector } from "../BaseDetector.js";
+import { BaseDetector } from "../../engine/BaseDetector.js";
 import { calculateHealthScore, detectChurnSignals } from "../../agents/CustomerHealthScore.js";
 
 /**

@@ -16,7 +16,7 @@
  */
 
 import { logger, query } from "@tagers/shared";
-import { BaseDetector } from "../engine/BaseDetector.js";
+import { BaseDetector } from "../../engine/BaseDetector.js";
 import { getBranchList, getAllDailyGoals } from "../../config/lucaConfig.js";
 
 /**

@@ -13,8 +13,8 @@
 
 import { logger } from "@tagers/shared";
 import { ttsService, PauseMarkers } from "./TTSService.js";
-import { morningBriefingGenerator } from "../services/morningBriefingGenerator.js";
-import { whatsappClient } from "../integrations/WhatsAppClient.js";
+import { briefingGenerator } from "../briefing/BriefingGenerator.js";
+import { whatsappClient } from "../channels/whatsapp/WhatsAppClient.js";
 
 /**
  * Templates de audio por sección
@@ -167,7 +167,7 @@ export class AudioBriefingGenerator {
   async getBriefingData(options) {
     try {
       // Usar el generador de briefing existente
-      const briefing = await morningBriefingGenerator.generate(options);
+      const briefing = await briefingGenerator.generate(options);
       return briefing;
     } catch (err) {
       logger.warn({ err: err?.message }, "Failed to get briefing data, using mock");

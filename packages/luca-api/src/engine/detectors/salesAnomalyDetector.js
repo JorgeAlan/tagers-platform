@@ -14,7 +14,7 @@
  * - critical_drop_pct: -25 (crítico si cae más de 25%)
  */
 
-import { BaseDetector } from "./BaseDetector.js";
+import { BaseDetector } from "../BaseDetector.js";
 import { logger } from "@tagers/shared";
 
 export class SalesAnomalyDetector extends BaseDetector {

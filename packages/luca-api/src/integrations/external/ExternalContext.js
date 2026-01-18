@@ -16,11 +16,11 @@
  */
 
 import { logger } from "@tagers/shared";
-import { weatherService } from "./weather/WeatherService.js";
-import { weatherImpact } from "./weather/WeatherImpact.js";
-import { mexicoHolidays } from "./calendar/MexicoHolidays.js";
-import { localEvents } from "./calendar/LocalEvents.js";
-import { schoolCalendar } from "./calendar/SchoolCalendar.js";
+import { weatherService } from "../weather/WeatherService.js";
+import { weatherImpact } from "../weather/WeatherImpact.js";
+import { mexicoHolidays } from "../calendar/MexicoHolidays.js";
+import { localEvents } from "../calendar/LocalEvents.js";
+import { schoolCalendar } from "../calendar/SchoolCalendar.js";
 
 /**
  * Cache de contexto

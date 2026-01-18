@@ -17,11 +17,11 @@
  */
 
 import { logger, query } from "@tagers/shared";
-import { FiscaliaDetector } from "./FiscaliaDetector.js";
-import FraudInvestigator from "./investigator/FraudInvestigator.js";
-import EvidenceCollector from "./investigator/EvidenceCollector.js";
-import { createCase, addEvidence, addHypothesis, diagnose, recommendAction } from "../../services/caseService.js";
-import { createAlert } from "../../services/alertService.js";
+import { FiscaliaDetector } from "../detectors/fraud/FiscaliaDetector.js";
+import FraudInvestigator from "../detectors/fraud/investigator/FraudInvestigator.js";
+import EvidenceCollector from "../detectors/fraud/investigator/EvidenceCollector.js";
+import { createCase, addEvidence, addHypothesis, diagnose, recommendAction } from "../services/caseService.js";
+import { createAlert } from "../services/alertService.js";
 
 export class FiscaliaAgent {
   constructor(config = {}) {
