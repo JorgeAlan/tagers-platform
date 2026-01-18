@@ -9,7 +9,7 @@
  * - Evitar ejecuciones concurrentes del mismo detector
  */
 
-import { Queue, Worker, QueueScheduler } from "bullmq";
+import { Queue, Worker } from "bullmq";
 import { logger, getRedisClient } from "@tagers/shared";
 import { getActiveDetectors, getDetector } from "../services/registryService.js";
 import { runDetector } from "./detectorRunner.js";
@@ -18,7 +18,6 @@ const QUEUE_NAME = "luca-detector-jobs";
 
 let queue = null;
 let worker = null;
-let scheduler = null;
 
 /**
  * Inicializa el scheduler de detectores
@@ -39,9 +38,6 @@ export async function initScheduler() {
   
   // Crear queue
   queue = new Queue(QUEUE_NAME, { connection });
-  
-  // Crear scheduler (mantiene jobs repetibles)
-  scheduler = new QueueScheduler(QUEUE_NAME, { connection });
   
   // Crear worker
   worker = new Worker(
@@ -102,7 +98,7 @@ export async function initScheduler() {
   // Programar detectores según su schedule
   await scheduleDetectors();
   
-  return { queue, worker, scheduler };
+  return { queue, worker };
 }
 
 /**
@@ -248,11 +244,6 @@ export async function closeScheduler() {
   if (worker) {
     await worker.close();
     logger.info("Worker closed");
-  }
-  
-  if (scheduler) {
-    await scheduler.close();
-    logger.info("Scheduler closed");
   }
   
   if (queue) {
