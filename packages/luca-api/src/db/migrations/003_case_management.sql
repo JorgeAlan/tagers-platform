@@ -416,8 +416,3 @@ CREATE TRIGGER update_tower_users_updated_at
 -- ═══════════════════════════════════════════════════════════════════════════
 -- MIGRATION COMPLETE
 -- ═══════════════════════════════════════════════════════════════════════════
-
--- Record migration
-INSERT INTO luca_migrations (name, description)
-VALUES ('003_case_management', 'Iteration 3: Cases, Alerts, Actions, and Audit tables')
-ON CONFLICT (name) DO NOTHING;
