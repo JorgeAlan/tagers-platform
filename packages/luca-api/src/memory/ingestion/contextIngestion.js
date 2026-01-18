@@ -12,9 +12,9 @@
 
 import { logger } from "@tagers/shared";
 import { memoryService, MemoryTypes } from "../MemoryService.js";
-import seasonality from "../../knowledge/seasonality.json" assert { type: "json" };
-import eventsImpact from "../../knowledge/events_impact.json" assert { type: "json" };
-import branchProfiles from "../../knowledge/branch_profiles.json" assert { type: "json" };
+import seasonality from "../../knowledge/seasonality.json" with { type: "json" };
+import eventsImpact from "../../knowledge/events_impact.json" with { type: "json" };
+import branchProfiles from "../../knowledge/branch_profiles.json" with { type: "json" };
 
 /**
  * Indexa todo el conocimiento base

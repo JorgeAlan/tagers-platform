@@ -3,9 +3,10 @@
  * LUCA MIGRATIONS - Sistema de migraciones de base de datos
  * ═══════════════════════════════════════════════════════════════════════════
  * 
- * Ejecuta migraciones SQL en orden.
+ * Ejecuta migraciones SQL en orden con soporte de transacciones.
+ * Cada migración corre en una transacción - si falla, hace rollback.
  * 
- * @version 0.1.0
+ * @version 0.2.0
  */
 
 import fs from "fs";
@@ -25,7 +26,7 @@ export async function runMigrations() {
     return;
   }
   
-  // Ensure migrations table exists
+  // Ensure migrations table exists (outside transaction)
   await query(`
     CREATE TABLE IF NOT EXISTS luca_migrations (
       id SERIAL PRIMARY KEY,
@@ -53,6 +54,7 @@ export async function runMigrations() {
   // Run pending migrations
   for (const file of files) {
     if (executedSet.has(file)) {
+      logger.info({ file }, "Migration already executed, skipping");
       continue;
     }
     
@@ -60,40 +62,130 @@ export async function runMigrations() {
     
     const sql = fs.readFileSync(path.join(migrationsDir, file), "utf-8");
     
-    // Split by semicolon and run each statement
-    const statements = sql
-      .split(/;\s*\n/)
-      .map(s => s.trim())
-      .filter(Boolean)
-      .filter(s => !s.startsWith("--"));
+    // Get a client from pool for transaction
+    const client = await pool.connect();
     
-    for (const stmt of statements) {
-      if (stmt.length > 0) {
-        await query(stmt);
-      }
+    try {
+      // Start transaction
+      await client.query("BEGIN");
+      
+      // Run the entire SQL file as one statement
+      // PostgreSQL handles multiple statements in one query
+      await client.query(sql);
+      
+      // Mark as executed
+      await client.query(
+        "INSERT INTO luca_migrations (filename) VALUES ($1)",
+        [file]
+      );
+      
+      // Commit transaction
+      await client.query("COMMIT");
+      
+      logger.info({ file }, "Migration completed");
+      
+    } catch (err) {
+      // Rollback on error
+      await client.query("ROLLBACK");
+      logger.error({ file, err: err?.message }, "Migration failed, rolled back");
+      throw err;
+      
+    } finally {
+      // Release client back to pool
+      client.release();
     }
-    
-    // Mark as executed
-    await query(
-      "INSERT INTO luca_migrations (filename) VALUES ($1)",
-      [file]
-    );
-    
-    logger.info({ file }, "Migration completed");
   }
+  
+  logger.info("All migrations completed successfully");
+}
+
+/**
+ * Reset migrations (for development only)
+ * WARNING: This will drop all LUCA tables!
+ */
+export async function resetMigrations() {
+  const pool = getPool();
+  if (!pool) {
+    logger.warn("DATABASE_URL not set, cannot reset");
+    return;
+  }
+  
+  logger.warn("Resetting all LUCA migrations...");
+  
+  // Drop all LUCA tables
+  const tables = [
+    "luca_migrations",
+    "luca_audit_log",
+    "luca_cases",
+    "luca_alerts", 
+    "luca_actions",
+    "luca_memory_episodes",
+    "luca_playbooks",
+    "detector_findings",
+    "detector_runs",
+    "finding_labels",
+    "registry_detectors",
+    "registry_metrics",
+    "registry_data_products",
+    "registry_datasets",
+    "registry_sources",
+    "tower_users",
+    "tower_sessions",
+    "case_evidence",
+    "case_hypotheses",
+    "case_diagnoses",
+    "case_actions",
+    "case_transitions",
+  ];
+  
+  // Drop views first
+  const views = [
+    "v_recent_runs",
+    "v_open_findings",
+    "v_detector_performance",
+  ];
+  
+  for (const view of views) {
+    try {
+      await query(`DROP VIEW IF EXISTS ${view} CASCADE`);
+    } catch (err) {
+      // Ignore errors
+    }
+  }
+  
+  for (const table of tables) {
+    try {
+      await query(`DROP TABLE IF EXISTS ${table} CASCADE`);
+      logger.info({ table }, "Dropped table");
+    } catch (err) {
+      // Ignore errors for non-existent tables
+    }
+  }
+  
+  logger.info("Reset complete. Run migrations again to recreate schema.");
 }
 
 // If run directly
-if (process.argv[1] === fileURLToPath(import.meta.url)) {
-  runMigrations()
-    .then(() => {
-      logger.info("All migrations completed");
-      process.exit(0);
-    })
-    .catch((err) => {
-      logger.error({ err: err?.message }, "Migration failed");
-      process.exit(1);
-    });
+const isMainModule = process.argv[1] === fileURLToPath(import.meta.url);
+
+if (isMainModule) {
+  const command = process.argv[2];
+  
+  if (command === "reset") {
+    resetMigrations()
+      .then(() => process.exit(0))
+      .catch((err) => {
+        logger.error({ err: err?.message }, "Reset failed");
+        process.exit(1);
+      });
+  } else {
+    runMigrations()
+      .then(() => process.exit(0))
+      .catch((err) => {
+        logger.error({ err: err?.message }, "Migration failed");
+        process.exit(1);
+      });
+  }
 }
 
-export default { runMigrations };
+export default { runMigrations, resetMigrations };
