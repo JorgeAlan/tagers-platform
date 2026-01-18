@@ -11,7 +11,7 @@
  */
 
 import { logger } from "@tagers/shared";
-import { BranchTwin, BranchConfigs } from "./BranchTwin.js";
+import { BranchTwin } from "./BranchTwin.js";
 import { DemandForecaster } from "./DemandForecaster.js";
 import { CapacityModel } from "./CapacityModel.js";
 

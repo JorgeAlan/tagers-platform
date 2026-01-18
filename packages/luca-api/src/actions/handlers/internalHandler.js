@@ -11,8 +11,8 @@
  */
 
 import { logger, query } from "@tagers/shared";
-import { caseService } from "../../services/caseService.js";
-import { alertService } from "../../services/alertService.js";
+import caseService from "../../services/caseService.js";
+import alertService from "../../services/alertService.js";
 import { notificationRouter } from "../../channels/notifications/NotificationRouter.js";
 
 export const internalHandler = {

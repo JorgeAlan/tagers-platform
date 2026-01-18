@@ -14,7 +14,7 @@
  */
 
 import { logger } from "@tagers/shared";
-import { getUsers, getUser as getConfigUser } from "../../config/lucaConfig.js";
+import { getUsers } from "../../config/lucaConfig.js";
 
 /**
  * Canales de notificación disponibles

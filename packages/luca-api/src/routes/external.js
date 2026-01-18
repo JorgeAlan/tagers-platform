@@ -6,9 +6,9 @@
 
 import { Router } from "express";
 import { logger } from "@tagers/shared";
-import { weatherService, BranchLocations } from "../integrations/weather/WeatherService.js";
+import { weatherService } from "../integrations/weather/WeatherService.js";
 import { weatherImpact } from "../integrations/weather/WeatherImpact.js";
-import { mexicoHolidays, HolidayTypes } from "../integrations/calendar/MexicoHolidays.js";
+import { mexicoHolidays } from "../integrations/calendar/MexicoHolidays.js";
 import { localEvents, EventTypes } from "../integrations/calendar/LocalEvents.js";
 import { schoolCalendar } from "../integrations/calendar/SchoolCalendar.js";
 import { externalContext } from "../integrations/external/ExternalContext.js";
@@ -106,7 +106,7 @@ router.get("/weather/impact/summary", async (req, res) => {
  * Lista ubicaciones de sucursales
  */
 router.get("/weather/locations", (req, res) => {
-  res.json(BranchLocations);
+  res.json(weatherService.getAllBranchLocations());
 });
 
 // ═══════════════════════════════════════════════════════════════════════════
@@ -173,7 +173,14 @@ router.get("/calendar/seasons", (req, res) => {
  * Tipos de feriados
  */
 router.get("/calendar/types", (req, res) => {
-  res.json(HolidayTypes);
+  // Types of holidays in Mexico
+  res.json({
+    NATIONAL: "Feriado nacional",
+    BANK: "Día bancario",
+    RELIGIOUS: "Feriado religioso",
+    CIVIC: "Fecha cívica",
+    SEASONAL: "Temporada especial",
+  });
 });
 
 // ═══════════════════════════════════════════════════════════════════════════
@@ -347,13 +354,14 @@ router.get("/context/demand/:branchId", async (req, res) => {
  * Estado del sistema de integraciones externas
  */
 router.get("/status", (req, res) => {
+  const branchLocations = weatherService.getAllBranchLocations();
   res.json({
     service: "external_integrations",
     status: "operational",
     integrations: {
       weather: {
         configured: !!process.env.OPENWEATHER_API_KEY,
-        branches: Object.keys(BranchLocations).length,
+        branches: Object.keys(branchLocations).length,
       },
       calendar: {
         holidaysLoaded: true,

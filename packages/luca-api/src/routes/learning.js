@@ -11,7 +11,7 @@ import { thresholdTuner } from "../learning/ThresholdTuner.js";
 import { patternLearner, PatternStates } from "../learning/PatternLearner.js";
 import { detectorMetrics, AnalysisPeriods } from "../metrics/DetectorMetrics.js";
 import { actionMetrics } from "../metrics/ActionMetrics.js";
-import { roiCalculator, ImpactCategories, ImpactSources } from "../metrics/ROICalculator.js";
+import { roiCalculator } from "../metrics/ROICalculator.js";
 import { weeklyLearningReport } from "../reports/WeeklyLearningReport.js";
 
 const router = Router();
@@ -413,8 +413,19 @@ router.get("/roi/report", async (req, res) => {
  */
 router.get("/roi/categories", (req, res) => {
   res.json({
-    categories: ImpactCategories,
-    sources: ImpactSources,
+    categories: {
+      REVENUE: "Impacto en ingresos",
+      COST_SAVINGS: "Ahorro de costos",
+      EFFICIENCY: "Eficiencia operativa",
+      QUALITY: "Mejora de calidad",
+      RISK_MITIGATION: "Mitigación de riesgos",
+    },
+    sources: {
+      DETECTOR: "Detector automático",
+      MANUAL: "Acción manual",
+      RECOMMENDATION: "Recomendación aceptada",
+      PREVENTION: "Prevención proactiva",
+    },
   });
 });
 

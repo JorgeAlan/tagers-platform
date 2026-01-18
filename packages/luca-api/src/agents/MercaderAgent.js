@@ -19,7 +19,7 @@ import { logger, query } from "@tagers/shared";
 import { inventoryClient, InventoryStatus } from "../integrations/inventory/InventoryClient.js";
 import { actionBus } from "../actions/ActionBus.js";
 import { getBranchList, getBranchName } from "../config/lucaConfig.js";
-import { caseService } from "../services/caseService.js";
+import caseService from "../services/caseService.js";
 
 /**
  * Umbrales para detección

@@ -6,11 +6,11 @@
 
 import { Router } from "express";
 import { logger } from "@tagers/shared";
-import { BranchTwin, BranchConfigs, getAllBranchTwins } from "../twin/BranchTwin.js";
+import { BranchTwin, getAllBranchTwins, getBranchConfigs } from "../twin/BranchTwin.js";
 import { demandForecaster } from "../twin/DemandForecaster.js";
 import { CapacityModel, getAllCapacitySummaries } from "../twin/CapacityModel.js";
 import { simulator, ScenarioTypes } from "../twin/Simulator.js";
-import { staffingOptimizer, ServiceLevels } from "../optimization/StaffingOptimizer.js";
+import { staffingOptimizer } from "../optimization/StaffingOptimizer.js";
 
 const router = Router();
 
@@ -23,7 +23,8 @@ const router = Router();
  * Lista todas las sucursales con configuración
  */
 router.get("/branches", (req, res) => {
-  const branches = Object.entries(BranchConfigs).map(([id, config]) => ({
+  const branchConfigs = getBranchConfigs();
+  const branches = Object.entries(branchConfigs).map(([id, config]) => ({
     id,
     name: config.name,
     city: config.city,
@@ -275,7 +276,11 @@ router.post("/simulator/compare", async (req, res) => {
  * Lista niveles de servicio disponibles
  */
 router.get("/staffing/levels", (req, res) => {
-  res.json(ServiceLevels);
+  res.json({
+    BASIC: { name: "Básico", waitTime: 15, coverage: 0.7 },
+    STANDARD: { name: "Estándar", waitTime: 10, coverage: 0.85 },
+    PREMIUM: { name: "Premium", waitTime: 5, coverage: 0.95 },
+  });
 });
 
 /**
@@ -389,7 +394,7 @@ router.get("/status", (req, res) => {
   res.json({
     service: "digital_twin",
     status: "operational",
-    branches: Object.keys(BranchConfigs).length,
+    branches: Object.keys(getBranchConfigs()).length,
     capabilities: [
       "demand_forecast",
       "capacity_modeling",

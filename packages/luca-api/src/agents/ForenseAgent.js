@@ -18,7 +18,7 @@
 import { logger, query } from "@tagers/shared";
 import { ForenseDetector } from "../detectors/sales/ForenseDetector.js";
 import { memoryService, MemoryTypes } from "../memory/MemoryService.js";
-import { caseService } from "../services/caseService.js";
+import caseService from "../services/caseService.js";
 import { getBranchName } from "../config/lucaConfig.js";
 
 /**

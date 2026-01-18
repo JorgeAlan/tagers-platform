@@ -26,7 +26,7 @@ import {
 } from "./CustomerHealthScore.js";
 import { actionBus } from "../actions/ActionBus.js";
 import { memoryService, MemoryTypes } from "../memory/MemoryService.js";
-import { caseService } from "../services/caseService.js";
+import caseService from "../services/caseService.js";
 
 /**
  * Configuración del Showman
